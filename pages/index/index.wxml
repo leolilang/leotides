@@ -8,12 +8,12 @@
         </button>
         <view class="nickname-wrapper">
           <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" value="{{userInfo.nickName}}" />
+          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" />
         </view>
         <button class="{{userInfo.nickName ? 'enter-button-enabled' : 'enter-button-disabled'}}" 
                 wx:if="{{userInfo.avatarUrl}}" 
                 bindtap="goToHomePage" 
-                disabled="{{!userInfo.nickName}}">进入</button>
+                disabled="{{!userInfo.nickName}}">进入体验</button>
       </block>
       <block wx:elif="{{!hasUserInfo}}">
         <button wx:if="{{canIUseGetUserProfile}}" bindtap="getUserProfile"> 获取头像昵称 </button>
@@ -22,7 +22,7 @@
       <block wx:else>
         <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
         <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-        <button class="enter-button-enabled" bindtap="goToHomePage">进入</button>
+        <button class="enter-button-enabled" bindtap="goToHomePage">进入体验</button>
       </block>
     </view>
     <view class="usermotto">
