@@ -8,7 +8,7 @@
         </button>
         <view class="nickname-wrapper">
           <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" />
+          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" value="{{userInfo.nickName}}" />
         </view>
         <button class="{{userInfo.nickName ? 'enter-button-enabled' : 'enter-button-disabled'}}" 
                 wx:if="{{userInfo.avatarUrl}}" 

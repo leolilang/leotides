@@ -46,5 +46,16 @@ Page({
                 console.error('获取用户信息失败:', err);
             }
         });
+    },
+
+    onShow() {
+        // 从本地存储中读取最新的用户信息
+        const userInfo = wx.getStorageSync('userInfo');
+        if (userInfo) {
+            this.setData({
+                userInfo: userInfo,
+                hasUserInfo: true
+            });
+        }
     }
 });
