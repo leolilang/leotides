@@ -71,9 +71,9 @@ Page({
 
     extractTideInfo(html) {
     
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-    
+        //const parser = new DOMParser();
+        //const doc = parser.parseFromString(html, 'text/html');
+        const doc = parse(html);
         // 提取潮汐时间段信息
         const tideTimeTable = doc.querySelectorAll('.tidesPoint')[0];
         const tideTimeRows = tideTimeTable.querySelectorAll('tr');
