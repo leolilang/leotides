@@ -1,0 +1,108 @@
+/* 减少不必要的外边距和内边距 */
+page {
+    padding: 0;
+    margin: 0;
+    background-color: #f4f4f4; /* 添加背景颜色 */
+}
+
+/* 调整内容容器的样式 */
+.content-container {
+    padding: 20px;
+    background-color: #fff; /* 内容容器背景色 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+    border-radius: 10px; /* 圆角 */
+    margin: 20px;
+}
+
+/* 调整每个信息项的样式 */
+.info-item {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee; /* 添加分割线 */
+    padding-bottom: 10px;
+}
+
+/* 头像选择样式 */
+.avatar-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.avatar-container button {
+    background-color: #008000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+}
+
+.avatar-container image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* 昵称输入样式 */
+.nickname-container {
+    display: flex;
+    align-items: center;
+}
+
+.nickname-container text {
+    width: 80px;
+}
+
+.nickname-container input {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* 折叠部分样式 */
+.collapse {
+    margin-top: 20px;
+}
+
+.collapse view:first-child {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.collapse view:nth-child(2) {
+    overflow: visible; /* 确保更多信息默认展示 */
+    max-height: none; 
+}
+
+/* 生日、地区、简介样式 */
+.info-detail {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.info-detail text {
+    width: 80px;
+}
+
+.info-detail picker,
+.info-detail textarea {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* 确认按钮样式 */
+.confirm-button {
+    background-color: #008000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 20px;
+    width: 100%;
+}

@@ -1,0 +1,6 @@
+<!--home.wxml-->
+<view class="navigation-bar">淀山湖 - 拦路港潮汐时刻表</view>
+<view class="content-container">
+  <rich-text nodes="{{htmlContent}}"></rich-text>
+  <button class="profile-btn" bindtap="goToProfile">个人中心</button>
+</view>

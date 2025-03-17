@@ -1,0 +1,65 @@
+/* home.wxss */
+.navigation-bar {
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    background-color: #008000;
+    color: #ffffff;
+    font-size: 18px;
+}
+
+.content-container {
+    padding: 16px;
+}
+
+.content-container h1 {
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.content-container p {
+    font-size: 16px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.content-container button {
+    background-color: #008000;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.content-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+}
+
+.content-container table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+
+.content-container .tidesBenchmark {
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 8px;
+}
+.profile-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    background-color: #008000;
+    color: white;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
