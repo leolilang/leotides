@@ -60,23 +60,6 @@ page {
     border-radius: 5px;
 }
 
-/* 折叠部分样式 */
-.collapse {
-    margin-top: 20px;
-}
-
-.collapse view:first-child {
-    background-color: #f0f0f0;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-.collapse view:nth-child(2) {
-    overflow: visible; /* 确保更多信息默认展示 */
-    max-height: none; 
-}
-
 /* 生日、地区、简介样式 */
 .info-detail {
     display: flex;
