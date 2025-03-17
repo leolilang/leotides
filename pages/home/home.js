@@ -70,10 +70,19 @@ Page({
     },
 
     extractTideInfo(html) {
-    
-        //const parser = new DOMParser();
-        //const doc = parser.parseFromString(html, 'text/html');
         const doc = parse(html);
+    
+        // 提取潮汐位置和时间信息
+        const locationAndTimeInfo = [];
+        const title = doc.querySelector('h1').textContent;
+        const dateInfo = doc.querySelector('#test1').textContent.trim().replace(/\s+/g, '');
+        const changeDateButtonText = doc.querySelector('#changeDate').textContent;
+        locationAndTimeInfo.push({
+            title,
+            dateInfo,
+            changeDateButtonText
+        });
+    
         // 提取潮汐时间段信息
         const tideTimeTable = doc.querySelectorAll('.tidesPoint')[0];
         const tideTimeRows = tideTimeTable.querySelectorAll('tr');
@@ -103,6 +112,7 @@ Page({
         }
     
         return {
+            locationAndTimeInfo,
             tideTimeInfo,
             tideHeightInfo
         };
