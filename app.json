@@ -9,7 +9,6 @@
         "navigationBarTextStyle": "white",
         "navigationBarTitleText": "潮汐数据助手",
         "navigationBarBackgroundColor": "#2F4F4F",
-        "navigationBarBorderStyle": "none",
         "backgroundTextStyle": "light",
         "enablePullDownRefresh": false
     },
