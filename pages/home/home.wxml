@@ -2,7 +2,6 @@
 <view class="navigation-bar">淀山湖 - 拦路港潮汐时刻表</view>
 <view class="content-container">
   <rich-text nodes="{{htmlContent}}"></rich-text>
-  <!-- 新增 echarts 组件 -->
-  <ec-canvas id="mychart-dom-line" canvas-id="mychart-line" ec="{{ec}}"></ec-canvas>
+  <canvas canvas-id="tideWaveCanvas" style="width: 100%; height: 300px;"></canvas>
   <button class="profile-btn" bindtap="goToProfile">个人中心</button>
 </view>

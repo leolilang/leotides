@@ -52,12 +52,8 @@ Page({
                         // 解析潮汐数据
                         const tideData = this.extractTideInfo(contentHtml);
                         console.log('解析到的潮汐数据内容:', tideData);
-                        this.setData({
-                            tideData: tideData
-                        });
 
-                        // 初始化图表
-                        this.initEcharts(tideData);
+                        this.drawTideWave(tideData);
                     }
                 } else {
                     console.error('请求失败，状态码:', res.statusCode);
@@ -117,39 +113,49 @@ Page({
             tideHeightInfo
         };
     },
+    drawTideWave(data) {
+        const ctx = wx.createCanvasContext('tideWaveCanvas');
+        const { tideHeightInfo } = data;
+        const canvasWidth = 300; // 假设画布宽度为 300px
+        const canvasHeight = 300; // 假设画布高度为 300px
+        const maxHeight = Math.max(...tideHeightInfo.map(item => parseInt(item.tideHeight.replace('cm', ''))));
+        const minHeight = Math.min(...tideHeightInfo.map(item => parseInt(item.tideHeight.replace('cm', ''))));
+        const heightRange = maxHeight - minHeight;
 
-    initEcharts(tideData) {
-        const chart = this.selectComponent('#mychart-dom-line').init((canvas, width, height) => {
-            const myChart = echarts.init(canvas, null, {
-                width: width,
-                height: height
-            });
+        // 绘制坐标轴
+        ctx.beginPath();
+        ctx.moveTo(20, 20);
+        ctx.lineTo(20, canvasHeight - 20);
+        ctx.lineTo(canvasWidth - 20, canvasHeight - 20);
+        ctx.strokeStyle = '#000';
+        ctx.stroke();
 
-            const option = {
-                title: {
-                    text: '潮汐信息波浪图'
-                },
-                xAxis: {
-                    type: 'value',
-                    min: 0,
-                    max: 24,
-                    name: '时间 (小时)'
-                },
-                yAxis: {
-                    type: 'value',
-                    name: '潮高 (cm)'
-                },
-                series: [{
-                    data: tideData,
-                    type: 'line',
-                    smooth: true,
-                    symbol: 'circle',
-                    symbolSize: 8
-                }]
-            };
-
-            myChart.setOption(option);
-            return myChart;
+        // 绘制波浪图
+        const pointCount = tideHeightInfo.length;
+        const pointSpacing = (canvasWidth - 40) / (pointCount - 1);
+        ctx.beginPath();
+        tideHeightInfo.forEach((item, index) => {
+            const x = 20 + index * pointSpacing;
+            const height = parseInt(item.tideHeight.replace('cm', ''));
+            const y = canvasHeight - 20 - ((height - minHeight) / heightRange) * (canvasHeight - 40);
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+            // 绘制点
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#008000';
+            ctx.fill();
+            // 绘制点的信息
+            ctx.fillStyle = '#000';
+            ctx.fillText(`${item.tideTime}: ${item.tideHeight}`, x + 5, y - 5);
         });
+        ctx.strokeStyle = '#008000';
+        ctx.stroke();
+
+        ctx.draw();
     }
+
 });
