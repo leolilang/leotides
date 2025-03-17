@@ -1,23 +1,26 @@
 {
-  "pages": [
-    "pages/index/index",
-    "pages/logs/logs",
-    "pages/home/home",
-    "pages/profile/profile/profile"
-  ],
-  "window": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Weixin",
-    "navigationBarBackgroundColor": "#ffffff"
-  },
-  "style": "v2",
-  "componentFramework": "glass-easel",
-  "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents",
-  "networkTimeout": {
-    "request": 10000,
-    "connectSocket": 10000,
-    "uploadFile": 10000,
-    "downloadFile": 10000
-  }
-}
+    "pages": [
+        "pages/index/index",
+        "pages/logs/logs",
+        "pages/home/home",
+        "pages/profile/profile/profile"
+    ],
+    "window": {
+        "navigationBarTextStyle": "white",
+        "navigationBarTitleText": "潮汐数据助手",
+        "navigationBarBackgroundColor": "#2F4F4F",
+        "navigationBarBorderStyle": "none",
+        "backgroundTextStyle": "light",
+        "enablePullDownRefresh": false
+    },
+    "style": "v2",
+    "componentFramework": "glass-easel",
+    "sitemapLocation": "sitemap.json",
+    "lazyCodeLoading": "requiredComponents",
+    "networkTimeout": {
+        "request": 10000,
+        "connectSocket": 10000,
+        "uploadFile": 10000,
+        "downloadFile": 10000
+    }
+}    
