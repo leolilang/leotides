@@ -113,48 +113,102 @@ Page({
             tideHeightInfo
         };
     },
+
     drawTideWave(data) {
         const ctx = wx.createCanvasContext('tideWaveCanvas');
         const { tideHeightInfo } = data;
-        const canvasWidth = 300; // 假设画布宽度为 300px
-        const canvasHeight = 300; // 假设画布高度为 300px
-        const maxHeight = Math.max(...tideHeightInfo.map(item => parseInt(item.tideHeight.replace('cm', ''))));
-        const minHeight = Math.min(...tideHeightInfo.map(item => parseInt(item.tideHeight.replace('cm', ''))));
+        const canvasWidth = 320; // 画布宽度
+        const canvasHeight = 300; // 画布高度
+        const padding = 40; // 内边距
+        const maxHeight = 400; // Y轴最大潮高
+        const minHeight = 0; // Y轴最小潮高
         const heightRange = maxHeight - minHeight;
-
+    
+        // 时间转换为分钟数（用于计算X轴比例）
+        const timeToMinutes = (time) => {
+            const [hours, minutes] = time.split(':').map(Number);
+            return hours * 60 + minutes;
+        };
+    
+        const minTime = timeToMinutes("00:00");
+        const maxTime = timeToMinutes("24:00");
+        const totalTimeRange = maxTime - minTime;
+    
+        // 计算各点的位置
+        const points = tideHeightInfo.map(item => {
+            const x = padding + ((timeToMinutes(item.tideTime) - minTime) / totalTimeRange) * (canvasWidth - 2 * padding);
+            const height = parseInt(item.tideHeight.replace('cm', ''));
+            const y = canvasHeight - padding - ((height - minHeight) / heightRange) * (canvasHeight - 2 * padding);
+            return { x, y, ...item };
+        });
+    
         // 绘制坐标轴
         ctx.beginPath();
-        ctx.moveTo(20, 20);
-        ctx.lineTo(20, canvasHeight - 20);
-        ctx.lineTo(canvasWidth - 20, canvasHeight - 20);
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, canvasHeight - padding);
+        ctx.lineTo(canvasWidth - padding, canvasHeight - padding);
         ctx.strokeStyle = '#000';
         ctx.stroke();
-
-        // 绘制波浪图
-        const pointCount = tideHeightInfo.length;
-        const pointSpacing = (canvasWidth - 40) / (pointCount - 1);
-        ctx.beginPath();
-        tideHeightInfo.forEach((item, index) => {
-            const x = 20 + index * pointSpacing;
-            const height = parseInt(item.tideHeight.replace('cm', ''));
-            const y = canvasHeight - 20 - ((height - minHeight) / heightRange) * (canvasHeight - 40);
-            if (index === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-            // 绘制点
-            ctx.beginPath();
-            ctx.arc(x, y, 3, 0, 2 * Math.PI);
-            ctx.fillStyle = '#008000';
-            ctx.fill();
-            // 绘制点的信息
-            ctx.fillStyle = '#000';
-            ctx.fillText(`${item.tideTime}: ${item.tideHeight}`, x + 5, y - 5);
+    
+        // Y轴标签（潮高）
+        ctx.fillStyle = '#000';
+        ctx.setFontSize(12);
+        ctx.fillText('潮高(cm)', 5, padding - 5);
+        for (let i = 0; i <= 4; i++) {
+            let yLabel = minHeight + (heightRange / 4) * i;
+            let y = canvasHeight - padding - (i * (canvasHeight - 2 * padding) / 4);
+            ctx.fillText(yLabel.toFixed(0), 10, y + 3);
+        }
+    
+        // X轴标签（时间）
+        ctx.fillText('时间', canvasWidth - 35, canvasHeight - 5);
+        const timeLabels = ['00:00', '06:00', '12:00', '18:00', '24:00'];
+        timeLabels.forEach((label, index) => {
+            let x = padding + index * ((canvasWidth - 2 * padding) / 4);
+            ctx.fillText(label, x - 10, canvasHeight - 5);
         });
+    
+        // **绘制波浪曲线（使用贝塞尔曲线平滑）**
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+    
+        for (let i = 0; i < points.length - 1; i++) {
+            let current = points[i];
+            let next = points[i + 1];
+    
+            let cp1x = (current.x + next.x) / 2; // 控制点 1 X 轴
+            let cp1y = current.y; // 控制点 1 Y 轴 (保持与当前点相同高度)
+            let cp2x = (current.x + next.x) / 2; // 控制点 2 X 轴
+            let cp2y = next.y; // 控制点 2 Y 轴 (保持与下一个点相同高度)
+    
+            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, next.x, next.y);
+        }
+    
         ctx.strokeStyle = '#008000';
+        ctx.setLineWidth(2);
         ctx.stroke();
-
+    
+        // **绘制数据点**
+        points.forEach((point, index) => {
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
+            ctx.fillStyle = point.highLowTide === "满潮" ? '#0000FF' : '#008000';
+            ctx.fill();
+    
+            // **动态调整文本位置，避免重叠**
+            let labelYOffset = (index % 2 === 0) ? -15 : 15;
+            let labelXOffset = (index === points.length - 1) ? -30 : 5;
+    
+            // 确保满潮点的文本不会靠近曲线
+            if (point.highLowTide === "满潮") {
+                labelYOffset -= 10;
+            }
+    
+            // 显示潮高信息
+            ctx.fillStyle = '#000';
+            ctx.fillText(`${point.tideTime} ${point.tideHeight}`, point.x + labelXOffset, point.y + labelYOffset);
+        });
+    
         ctx.draw();
     }
 
