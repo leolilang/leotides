@@ -97,7 +97,7 @@ Page({
                                         icon: 'success'
                                     });
                                     // 登录成功后跳转到个人中心页面
-                                    wx.navigateTo({
+                                    wx.redirectTo({
                                         url: '../profile/profile/profile',
                                         success: () => {
                                             console.log('成功跳转到个人中心页面');
@@ -114,7 +114,7 @@ Page({
             });
         } else {
             // 已登录，直接跳转到个人中心页面
-            wx.navigateTo({
+            wx.redirectTo({
                 url: '../profile/profile/profile',
                 success: () => {
                     console.log('成功跳转到个人中心页面');

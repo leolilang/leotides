@@ -61,7 +61,7 @@ Page({
         });
         console.log('点击确认按钮，保存用户信息:', getApp().globalData.userInfo);
         // 跳转至主页
-        wx.navigateTo({
+        wx.redirectTo({
             url: '../../home/home'
         });
     },
@@ -73,8 +73,13 @@ Page({
             avatarUrl: '/images/default-avatar.png', 
             nickName: '游客'
         };
+        getApp().globalData.isLoggedIn = false;
         // 跳转至主页
-        wx.navigateTo({
+        wx.showToast({
+            title: '退出登录成功',
+            icon: 'success'
+        });
+        wx.redirectTo({
             url: '../../home/home'
         });
     }

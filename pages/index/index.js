@@ -18,7 +18,7 @@ Page({
     },
     
     goToHomePage() {
-        wx.navigateTo({
+        wx.redirectTo({
             url: '../home/home'
         });
     },
