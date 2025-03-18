@@ -19,25 +19,47 @@ Page({
         ec: {
             onInit: initChart
         },
-        tideData: [] // 存储潮汐数据
+        tideData: [] // 存储潮汐
     },
     goToProfile() {
         const app = getApp();
         if (!app.globalData.isLoggedIn) {
-            // 弹出登录窗口
+            // 弹出登录提示窗口
             wx.showModal({
                 title: '登录提示',
                 content: '请先登录以查看个人中心',
                 confirmText: '登录',
                 success: res => {
                     if (res.confirm) {
+                        // 弹出带输入框的登录弹窗
                         wx.showModal({
-                            title: '模拟登录',
-                            content: '这里可以实现具体的登录逻辑，为了演示，假设登录成功',
+                            title: '登录',
+                            content: '游客',
+                            editable: true,
+                            placeholderText: '请输入昵称',
                             confirmText: '确定',
+                            cancelText: '取消',
                             success: loginRes => {
                                 if (loginRes.confirm) {
+                                    const nickname = loginRes.content && loginRes.content.trim();
+                                    // 验证昵称长度
+                                    if (!nickname || nickname.length < 2 || nickname.length > 10) {
+                                        wx.showToast({
+                                            title: '请输入有效的昵称（2-10个字符）',
+                                            icon: 'none'
+                                        });
+                                        return;
+                                    }
+                                    // 保存昵称信息到本地存储，并更新全局状态
+                                    wx.setStorageSync('nickName', nickname);
                                     app.globalData.isLoggedIn = true;
+                                    app.globalData.userInfo.nickName = nickname;
+    
+                                    wx.showToast({
+                                        title: '登录成功',
+                                        icon: 'success'
+                                    });
+                                    // 登录成功后跳转到个人中心页面
                                     wx.navigateTo({
                                         url: '../profile/profile/profile',
                                         success: () => {
@@ -65,38 +87,6 @@ Page({
                 }
             });
         }
-    },
-    onLoad() {
-        // 发起请求获取 https://www.chaoxibiao.net 的内容
-        wx.request({
-            url: 'https://www.chaoxibiao.net/tides/30.html',
-            success: function (res) {
-                if (res.statusCode === 200) {
-                    const html = res.data;
-                    // 使用 node-html-parser 解析 HTML
-                    const root = parse(html);
-                    const contentDiv = root.querySelector('#content');
-                    if (contentDiv) {
-                        const contentHtml = contentDiv.outerHTML;
-                        this.setData({
-                            htmlContent: contentHtml
-                        });
-                        console.log('提取到的 content 内容:', contentHtml);
-
-                        // 解析潮汐数据
-                        const tideData = this.extractTideInfo(contentHtml);
-                        console.log('解析到的潮汐数据内容:', tideData);
-
-                        this.drawTideWave(tideData);
-                    }
-                } else {
-                    console.error('请求失败，状态码:', res.statusCode);
-                }
-            }.bind(this),
-            fail: function (err) {
-                console.error('请求失败:', err);
-            }
-        });
     },
 
     extractTideInfo(html) {
@@ -222,7 +212,7 @@ Page({
         ctx.setLineWidth(2);
         ctx.stroke();
     
-        // **绘制数据点**
+        // **绘制点**
         points.forEach((point, index) => {
             ctx.beginPath();
             ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);

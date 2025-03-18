@@ -3,8 +3,7 @@ Page({
     data: {
         userInfo: {},
         genderList: ['男', '女'],
-        genderIndex: -1,
-        isCollapsed: false // 更多信息默认展开
+        genderIndex: -1
     },
 
     onLoad() {
@@ -49,13 +48,6 @@ Page({
                 this.setData({ userInfo: getApp().globalData.userInfo });
                 getApp().saveUserInfoToStorage();
             }
-        });
-    },
-
-    // 新增折叠切换方法
-    toggleCollapse() {
-        this.setData({
-            isCollapsed: !this.data.isCollapsed
         });
     },
 
