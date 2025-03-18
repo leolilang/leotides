@@ -4,7 +4,7 @@ var __DEFINE__ = function(modId, func, req) { var m = { exports: {}, _tempexport
 var __REQUIRE__ = function(modId, source) { if(!__MODS__[modId]) return require(source); if(!__MODS__[modId].status) { var m = __MODS__[modId].m; m._exports = m._tempexports; var desp = Object.getOwnPropertyDescriptor(m, "exports"); if (desp && desp.configurable) Object.defineProperty(m, "exports", { set: function (val) { if(typeof val === "object" && val !== m._exports) { m._exports.__proto__ = val.__proto__; Object.keys(val).forEach(function (k) { m._exports[k] = val[k]; }); } m._tempexports = val }, get: function () { return m._tempexports; } }); __MODS__[modId].status = 1; __MODS__[modId].func(__MODS__[modId].req, m, m.exports); } return __MODS__[modId].m.exports; };
 var __REQUIRE_WILDCARD__ = function(obj) { if(obj && obj.__esModule) { return obj; } else { var newObj = {}; if(obj != null) { for(var k in obj) { if (Object.prototype.hasOwnProperty.call(obj, k)) newObj[k] = obj[k]; } } newObj.default = obj; return newObj; } };
 var __REQUIRE_DEFAULT__ = function(obj) { return obj && obj.__esModule ? obj.default : obj; };
-__DEFINE__(1742196033891, function(require, module, exports) {
+__DEFINE__(1742285584176, function(require, module, exports) {
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -37,8 +37,8 @@ parse.Node = node_1.default;
 parse.TextNode = text_1.default;
 parse.NodeType = type_1.default;
 
-}, function(modId) {var map = {"./nodes/comment":1742196033892,"./nodes/html":1742196033895,"./nodes/node":1742196033893,"./nodes/text":1742196033899,"./nodes/type":1742196033894,"./parse":1742196033900,"./valid":1742196033901}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742196033892, function(require, module, exports) {
+}, function(modId) {var map = {"./nodes/comment":1742285584177,"./nodes/html":1742285584180,"./nodes/node":1742285584178,"./nodes/text":1742285584184,"./nodes/type":1742285584179,"./parse":1742285584185,"./valid":1742285584186}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1742285584177, function(require, module, exports) {
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -73,8 +73,8 @@ class CommentNode extends node_1.default {
 }
 exports.default = CommentNode;
 
-}, function(modId) { var map = {"./node":1742196033893,"./type":1742196033894}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742196033893, function(require, module, exports) {
+}, function(modId) { var map = {"./node":1742285584178,"./type":1742285584179}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1742285584178, function(require, module, exports) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const he_1 = require("he");
@@ -118,7 +118,7 @@ class Node {
 exports.default = Node;
 
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742196033894, function(require, module, exports) {
+__DEFINE__(1742285584179, function(require, module, exports) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var NodeType;
@@ -130,7 +130,7 @@ var NodeType;
 exports.default = NodeType;
 
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742196033895, function(require, module, exports) {
+__DEFINE__(1742285584180, function(require, module, exports) {
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -1258,8 +1258,8 @@ function resetParent(nodes, parent) {
     });
 }
 
-}, function(modId) { var map = {"../back":1742196033896,"../matcher":1742196033897,"../void-tag":1742196033898,"./comment":1742196033892,"./node":1742196033893,"./text":1742196033899,"./type":1742196033894}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742196033896, function(require, module, exports) {
+}, function(modId) { var map = {"../back":1742285584181,"../matcher":1742285584182,"../void-tag":1742285584183,"./comment":1742285584177,"./node":1742285584178,"./text":1742285584184,"./type":1742285584179}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1742285584181, function(require, module, exports) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 function arr_back(arr) {
@@ -1268,7 +1268,7 @@ function arr_back(arr) {
 exports.default = arr_back;
 
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742196033897, function(require, module, exports) {
+__DEFINE__(1742285584182, function(require, module, exports) {
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -1376,8 +1376,8 @@ exports.default = {
     findAll
 };
 
-}, function(modId) { var map = {"./nodes/type":1742196033894}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742196033898, function(require, module, exports) {
+}, function(modId) { var map = {"./nodes/type":1742285584179}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1742285584183, function(require, module, exports) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class VoidTag {
@@ -1407,7 +1407,7 @@ class VoidTag {
 exports.default = VoidTag;
 
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742196033899, function(require, module, exports) {
+__DEFINE__(1742285584184, function(require, module, exports) {
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -1514,16 +1514,16 @@ function trimText(text) {
     return (hasLeadingSpace ? ' ' : '') + text.slice(startPos, endPos + 1) + (hasTrailingSpace ? ' ' : '');
 }
 
-}, function(modId) { var map = {"./node":1742196033893,"./type":1742196033894}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742196033900, function(require, module, exports) {
+}, function(modId) { var map = {"./node":1742285584178,"./type":1742285584179}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1742285584185, function(require, module, exports) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
 var html_1 = require("./nodes/html");
 Object.defineProperty(exports, "default", { enumerable: true, get: function () { return html_1.parse; } });
 
-}, function(modId) { var map = {"./nodes/html":1742196033895}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742196033901, function(require, module, exports) {
+}, function(modId) { var map = {"./nodes/html":1742285584180}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1742285584186, function(require, module, exports) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const html_1 = require("./nodes/html");
@@ -1537,8 +1537,8 @@ function valid(data, options = {}) {
 }
 exports.default = valid;
 
-}, function(modId) { var map = {"./nodes/html":1742196033895}; return __REQUIRE__(map[modId], modId); })
-return __REQUIRE__(1742196033891);
+}, function(modId) { var map = {"./nodes/html":1742285584180}; return __REQUIRE__(map[modId], modId); })
+return __REQUIRE__(1742285584176);
 })()
 //miniprogram-npm-outsideDeps=["he","css-select"]
 //# sourceMappingURL=index.js.map

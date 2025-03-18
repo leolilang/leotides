@@ -3,7 +3,11 @@
     <view class="user-avatar">
         <image src="{{userInfo.avatarUrl}}" mode="aspectFit"></image>
     </view>
-    淀山湖 - 拦路港潮汐时刻表
+    <picker bindchange="onLocationChange" value="{{currentLocationIndex}}" range="{{locationNames}}">
+        <view class="picker">
+            {{locationList[currentLocationIndex].name}}
+        </view>
+    </picker>
 </view>
 <view class="content-container">
   <rich-text nodes="{{htmlContent}}"></rich-text>

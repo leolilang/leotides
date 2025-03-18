@@ -6,7 +6,11 @@
     background-color: #008000;
     color: #ffffff;
     font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 
 .content-container {
     padding: 16px;
@@ -88,3 +92,40 @@
     height: 100%;
     object-fit: cover;
 }
+
+.tidesPoint {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #ffffff; /* 表格背景颜色 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+}
+.tidesPoint th, .tidesPoint td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+.tidesPoint th {
+    background-color: #e6f7ff; /* 表头背景颜色，浅蓝色 */
+    color: #333; /* 表头文字颜色 */
+    font-weight: bold;
+}
+.tidesPoint tr:nth-child(even) {
+    background-color: #f2f2f2; /* 偶数行背景颜色 */
+}
+.tidesPoint tr:hover {
+    background-color: #e9e9e9; /* 鼠标悬停行背景颜色 */
+}
+.tidesPoint caption {
+    caption-side: top;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.picker {
+    color: white;
+    margin-left: 10px;
+}
+

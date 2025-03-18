@@ -20,12 +20,34 @@ Page({
             onInit: initChart
         },
         tideData: [], // 存储潮汐
-        userInfo: {}
+        userInfo: {},
+        // 新增位置列表和当前选择的位置索引
+        locationList: [
+            { name: '淀山湖-拦路港', url: 'https://www.chaoxibiao.net/tides/30.html' },
+            { name: '上海-黄埔公园', url: 'https://www.chaoxibiao.net/tides/30.html' },
+            { name: '上海-佘山', url: 'https://www.chaoxibiao.net/tides/26.html' },
+            { name: '上海-崇明', url: 'https://www.chaoxibiao.net/tides/27.html' },
+            { name: '上海-吴淞', url: 'https://www.chaoxibiao.net/tides/347.html' },
+            { name: '上海-奉贤', url: 'https://www.chaoxibiao.net/tides/504.html' }
+        ],
+        currentLocationIndex: 0,
+        locationNames: [], // 存储位置名称列表
     },
     onLoad() {
-        // 发起请求获取 https://www.chaoxibiao.net 的内容
+        // 获取用户信息
+        this.setData({
+            userInfo: getApp().globalData.userInfo
+        });
+        // 提取位置名称列表
+        const locationNames = this.data.locationList.map(item => item.name);
+        this.setData({ locationNames });
+        // 加载默认位置
+        this.loadLocationData(this.data.locationList[this.data.currentLocationIndex].url);
+    },
+    loadLocationData(url) {
+        // 发起请求获取对应位置的内容
         wx.request({
-            url: 'https://www.chaoxibiao.net/tides/30.html',
+            url: url,
             success: function (res) {
                 if (res.statusCode === 200) {
                     const html = res.data;
@@ -42,7 +64,7 @@ Page({
                         // 解析潮汐
                         const tideData = this.extractTideInfo(contentHtml);
                         console.log('解析到的潮汐内容:', tideData);
-   
+
                         this.drawTideWave(tideData);
                     }
                 } else {
@@ -53,10 +75,14 @@ Page({
                 console.error('请求失败:', err);
             }
         });
-        // 获取用户信息
-       this.setData({
-           userInfo: getApp().globalData.userInfo
-       });
+    },
+    onLocationChange(e) {
+        const index = e.detail.value;
+        this.setData({
+            currentLocationIndex: index
+        });
+        const url = this.data.locationList[index].url;
+        this.loadLocationData(url);
     },
     goToProfile() {
         const app = getApp();
