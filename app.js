@@ -6,18 +6,20 @@ App({
         logs.unshift(Date.now());
         wx.setStorageSync('logs', logs);
 
-        // 尝试从本地存储加载用户信息
-        const userInfo = wx.getStorageSync('userInfo');
-        if (userInfo) {
-            this.globalData.userInfo = userInfo;
+        // 初始化用户登录状态
+        this.globalData = {
+            userInfo: {
+                // 使用本地图片的相对路径
+                avatarUrl: '/images/default-avatar.png', 
+                nickName: '游客'
+            },
+            contentHtml: '',
+            isLoggedIn: false // 添加登录状态标志
+        };
+        // 添加 saveUserInfoToStorage 方法
+        this.saveUserInfoToStorage = function() {
+            wx.setStorageSync('userInfo', this.globalData.userInfo);
         }
-
-        // 移除初始登录逻辑
-        // wx.login({
-        //     success: res => {
-        //         // 发送 res.code 到后台换取 openId, sessionKey, unionId
-        //     }
-        // });
     },
     globalData: {
         userInfo: {

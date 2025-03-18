@@ -22,15 +22,49 @@ Page({
         tideData: [] // 存储潮汐数据
     },
     goToProfile() {
-        wx.navigateTo({
-            url: '../profile/profile/profile',
-            success: function () {
-                console.log('成功跳转到个人中心页面');
-            },
-            fail: function (err) {
-                console.error('跳转失败:', err);
-            }
-        });
+        const app = getApp();
+        if (!app.globalData.isLoggedIn) {
+            // 弹出登录窗口
+            wx.showModal({
+                title: '登录提示',
+                content: '请先登录以查看个人中心',
+                confirmText: '登录',
+                success: res => {
+                    if (res.confirm) {
+                        wx.showModal({
+                            title: '模拟登录',
+                            content: '这里可以实现具体的登录逻辑，为了演示，假设登录成功',
+                            confirmText: '确定',
+                            success: loginRes => {
+                                if (loginRes.confirm) {
+                                    app.globalData.isLoggedIn = true;
+                                    wx.navigateTo({
+                                        url: '../profile/profile/profile',
+                                        success: () => {
+                                            console.log('成功跳转到个人中心页面');
+                                        },
+                                        fail: err => {
+                                            console.error('跳转失败:', err);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        } else {
+            // 已登录，直接跳转到个人中心页面
+            wx.navigateTo({
+                url: '../profile/profile/profile',
+                success: () => {
+                    console.log('成功跳转到个人中心页面');
+                },
+                fail: err => {
+                    console.error('跳转失败:', err);
+                }
+            });
+        }
     },
     onLoad() {
         // 发起请求获取 https://www.chaoxibiao.net 的内容

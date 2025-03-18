@@ -10,7 +10,13 @@ Page({
         canIUseGetUserProfile: wx.canIUse('getUserProfile'),
         hasUserInfo: false
     },
-
+    onLoad() {
+        // 直接跳转到主页
+        wx.navigateTo({
+            url: '../home/home'
+        });
+    },
+    
     goToHomePage() {
         wx.navigateTo({
             url: '../home/home'
