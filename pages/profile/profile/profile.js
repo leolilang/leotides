@@ -60,5 +60,22 @@ Page({
             duration: 2000
         });
         console.log('点击确认按钮，保存用户信息:', getApp().globalData.userInfo);
+        // 跳转至主页
+        wx.navigateTo({
+            url: '../../home/home'
+        });
+    },
+    // 退出登录逻辑
+    onLogout() {
+        // 清空本地存储的用户信息
+        wx.removeStorageSync('userInfo');
+        getApp().globalData.userInfo = {
+            avatarUrl: '/images/default-avatar.png', 
+            nickName: '游客'
+        };
+        // 跳转至主页
+        wx.navigateTo({
+            url: '../../home/home'
+        });
     }
 });

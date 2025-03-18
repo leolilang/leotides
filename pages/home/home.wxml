@@ -1,5 +1,10 @@
 <!--home.wxml-->
-<view class="navigation-bar">淀山湖 - 拦路港潮汐时刻表</view>
+<view class="navigation-bar">
+    <view class="user-avatar">
+        <image src="{{userInfo.avatarUrl}}" mode="aspectFit"></image>
+    </view>
+    淀山湖 - 拦路港潮汐时刻表
+</view>
 <view class="content-container">
   <rich-text nodes="{{htmlContent}}"></rich-text>
   <canvas canvas-id="tideWaveCanvas" style="width: 100%; height: 300px;"></canvas>

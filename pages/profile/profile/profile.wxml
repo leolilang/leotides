@@ -12,5 +12,7 @@
         </view>
         <!-- 确认按钮 -->
         <button class="confirm-button" bindtap="onConfirm">确认</button>
+        <!-- 退出登录按钮 -->
+        <button class="logout-button" bindtap="onLogout">退出登录</button>
     </view>
 </scroll-view>

@@ -19,7 +19,44 @@ Page({
         ec: {
             onInit: initChart
         },
-        tideData: [] // 存储潮汐
+        tideData: [], // 存储潮汐
+        userInfo: {}
+    },
+    onLoad() {
+        // 发起请求获取 https://www.chaoxibiao.net 的内容
+        wx.request({
+            url: 'https://www.chaoxibiao.net/tides/30.html',
+            success: function (res) {
+                if (res.statusCode === 200) {
+                    const html = res.data;
+                    // 使用 node-html-parser 解析 HTML
+                    const root = parse(html);
+                    const contentDiv = root.querySelector('#content');
+                    if (contentDiv) {
+                        const contentHtml = contentDiv.outerHTML;
+                        this.setData({
+                            htmlContent: contentHtml
+                        });
+                        console.log('提取到的 content 内容:', contentHtml);
+
+                        // 解析潮汐
+                        const tideData = this.extractTideInfo(contentHtml);
+                        console.log('解析到的潮汐内容:', tideData);
+   
+                        this.drawTideWave(tideData);
+                    }
+                } else {
+                    console.error('请求失败，状态码:', res.statusCode);
+                }
+            }.bind(this),
+            fail: function (err) {
+                console.error('请求失败:', err);
+            }
+        });
+        // 获取用户信息
+       this.setData({
+           userInfo: getApp().globalData.userInfo
+       });
     },
     goToProfile() {
         const app = getApp();
