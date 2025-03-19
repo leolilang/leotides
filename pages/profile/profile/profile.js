@@ -87,8 +87,19 @@ Page({
             title: '退出登录成功',
             icon: 'success'
         });
-        wx.redirectTo({
+        wx.switchTab({
             url: '../../home/home'
+        });
+    },
+    goToWeatherPage() {
+        wx.switchTab({
+            url: '../weather/weather',
+            success: () => {
+                console.log('成功跳转到天气页面');
+            },
+            fail: err => {
+                console.error('跳转失败:', err);
+            }
         });
     }
 });

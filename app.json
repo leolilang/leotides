@@ -22,5 +22,31 @@
         "connectSocket": 10000,
         "uploadFile": 10000,
         "downloadFile": 10000
+    },
+    "tabBar": {
+        "color": "#000000",
+        "selectedColor": "#008000",
+        "backgroundColor": "#ffffff",
+        "borderStyle": "black",
+        "list": [
+            {
+                "pagePath": "pages/home/home",
+                "text": "主页",
+                "iconPath": "images/home.png",
+                "selectedIconPath": "images/home-selected.png"
+            },
+            {
+                "pagePath": "pages/weather/weather",
+                "text": "天气",
+                "iconPath": "images/weather.png",
+                "selectedIconPath": "images/weather-selected.png"
+            },
+            {
+                "pagePath": "pages/profile/profile/profile",
+                "text": "个人",
+                "iconPath": "images/profile.png",
+                "selectedIconPath": "images/profile-selected.png"
+            }
+        ]
     }
 }    

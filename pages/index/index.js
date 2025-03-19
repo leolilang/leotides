@@ -4,7 +4,8 @@ Page({
         userInfo: {
             // 修改为本地图片路径
             avatarUrl: '/images/default-avatar.png', 
-            nickName: '游客'
+            nickName: '游客',
+            intro: ''
         },
         canIUseNicknameComp: wx.canIUse('button.open-type.chooseAvatar'),
         canIUseGetUserProfile: wx.canIUse('getUserProfile'),
@@ -12,13 +13,13 @@ Page({
     },
     onLoad() {
         // 直接跳转到主页
-        wx.navigateTo({
+        wx.switchTab ({
             url: '../home/home'
         });
     },
     
     goToHomePage() {
-        wx.redirectTo({
+        wx.switchTab({
             url: '../home/home'
         });
     },

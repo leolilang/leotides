@@ -117,13 +117,13 @@ Page({
                                     app.globalData.isLoggedIn = true;
                                     app.globalData.userInfo.nickName = nickname;
                                     app.saveUserInfoToStorage(); // 保存用户信息和登录状态
-                                    
+
                                     wx.showToast({
                                         title: '登录成功',
                                         icon: 'success'
                                     });
                                     // 登录成功后跳转到个人中心页面
-                                    wx.redirectTo({
+                                    wx.switchTab ({
                                         url: '../profile/profile/profile',
                                         success: () => {
                                             console.log('成功跳转到个人中心页面');
@@ -140,7 +140,7 @@ Page({
             });
         } else {
             // 已登录，直接跳转到个人中心页面
-            wx.redirectTo({
+            wx.switchTab ({
                 url: '../profile/profile/profile',
                 success: () => {
                     console.log('成功跳转到个人中心页面');
@@ -300,8 +300,19 @@ Page({
         ctx.draw();
     },
     goToWeatherPage() {
-        wx.navigateTo({
+        wx.switchTab({
             url: '../weather/weather'
+        });
+    },
+    goToHomePage() {
+        wx.switchTab({
+            url: '../home/home',
+            success: () => {
+                console.log('成功跳转到主页');
+            },
+            fail: err => {
+                console.error('跳转失败:', err);
+            }
         });
     }
     
