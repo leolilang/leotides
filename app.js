@@ -6,31 +6,33 @@ App({
         logs.unshift(Date.now());
         wx.setStorageSync('logs', logs);
 
-        // 初始化用户登录状态
+        // 从本地存储读取用户信息和登录状态
+        const userInfo = wx.getStorageSync('userInfo') || null;
+        const isLoggedIn = wx.getStorageSync('isLoggedIn') || false;
+
+        // 初始化 globalData，确保用户数据不会被重置
         this.globalData = {
-            userInfo: {
-                // 使用本地图片的相对路径
-                avatarUrl: '/images/default-avatar.png', 
+            userInfo: userInfo || {  // 如果本地没有存储，则使用默认值
+                avatarUrl: '/images/default-avatar.png',
                 nickName: '游客'
             },
-            contentHtml: '',
-            isLoggedIn: false // 添加登录状态标志
+            isLoggedIn: isLoggedIn,  // 直接使用本地存储的登录状态
+            contentHtml: ''
         };
-        // 添加 saveUserInfoToStorage 方法
-        this.saveUserInfoToStorage = function() {
-            wx.setStorageSync('userInfo', this.globalData.userInfo);
-        }
     },
+
     globalData: {
         userInfo: {
-            // 使用本地图片的相对路径
-            avatarUrl: '/images/default-avatar.png', 
+            avatarUrl: '/images/default-avatar.png',
             nickName: '游客'
         },
+        isLoggedIn: false,  // 默认未登录
         contentHtml: ''
     },
-    // 添加 saveUserInfoToStorage 方法
+
+    // 保存用户信息到本地存储
     saveUserInfoToStorage() {
         wx.setStorageSync('userInfo', this.globalData.userInfo);
+        wx.setStorageSync('isLoggedIn', this.globalData.isLoggedIn);
     }
 });

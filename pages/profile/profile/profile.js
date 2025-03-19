@@ -69,6 +69,7 @@ Page({
     onLogout() {
         // 清空本地存储的用户信息
         wx.removeStorageSync('userInfo');
+        wx.removeStorageSync('isLoggedIn');
         getApp().globalData.userInfo = {
             avatarUrl: '/images/default-avatar.png', 
             nickName: '游客'

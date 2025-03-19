@@ -116,7 +116,8 @@ Page({
                                     wx.setStorageSync('nickName', nickname);
                                     app.globalData.isLoggedIn = true;
                                     app.globalData.userInfo.nickName = nickname;
-    
+                                    app.saveUserInfoToStorage(); // 保存用户信息和登录状态
+                                    
                                     wx.showToast({
                                         title: '登录成功',
                                         icon: 'success'
