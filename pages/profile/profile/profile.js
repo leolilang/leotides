@@ -28,6 +28,12 @@ Page({
         this.setData({ userInfo: getApp().globalData.userInfo });
     },
 
+    onIntroInput(e) {
+        const intro = e.detail.value;
+        getApp().globalData.userInfo.intro = intro;
+        this.setData({ userInfo: getApp().globalData.userInfo });
+      },
+
     onGenderChange(e) {
         const gender = this.data.genderList[e.detail.value];
         getApp().globalData.userInfo.gender = gender;
@@ -72,7 +78,8 @@ Page({
         wx.removeStorageSync('isLoggedIn');
         getApp().globalData.userInfo = {
             avatarUrl: '/images/default-avatar.png', 
-            nickName: '游客'
+            nickName: '游客',
+            intro: '' // 新增个人简介字段
         };
         getApp().globalData.isLoggedIn = false;
         // 跳转至主页

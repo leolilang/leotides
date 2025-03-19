@@ -10,6 +10,16 @@
             <text>昵称</text>
             <input type="text" bind:change="onInputChange" value="{{userInfo.nickName}}"></input>
         </view>
+        <!-- 添加个人简介输入框 -->
+        <view class="profile-intro">
+            <text>个人简介</text>
+            <input 
+            type="text" 
+            placeholder="请输入个人简介" 
+            value="{{userInfo.intro}}" 
+            bindinput="onIntroInput"
+            />
+        </view>
         <!-- 确认按钮 -->
         <button class="confirm-button" bindtap="onConfirm">确认</button>
         <!-- 退出登录按钮 -->

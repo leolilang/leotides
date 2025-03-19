@@ -14,7 +14,8 @@ App({
         this.globalData = {
             userInfo: userInfo || {  // 如果本地没有存储，则使用默认值
                 avatarUrl: '/images/default-avatar.png',
-                nickName: '游客'
+                nickName: '游客',
+                intro: '' // 新增个人简介字段
             },
             isLoggedIn: isLoggedIn,  // 直接使用本地存储的登录状态
             contentHtml: ''
@@ -24,7 +25,8 @@ App({
     globalData: {
         userInfo: {
             avatarUrl: '/images/default-avatar.png',
-            nickName: '游客'
+            nickName: '游客',
+            intro: '' // 新增个人简介字段
         },
         isLoggedIn: false,  // 默认未登录
         contentHtml: ''
