@@ -128,4 +128,14 @@
     color: white;
     margin-left: 10px;
 }
-
+/*天气按钮样式*/
+.weather-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 12px 24px;
+    background-color: #008000;
+    color: white;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}

@@ -1,0 +1,47 @@
+<!-- pages/weather/weather.wxml -->
+<view class="container">
+  <!-- 当前天气 -->
+  <view class="current-box">
+    当前天气
+    <text class="current-temp">{{current.temp}}°</text>
+    <view class="current-details">
+      <text>{{current.weather}}</text>
+      <text>湿度 {{current.humidity}}</text>
+      <text>{{current.wind}}</text>
+    </view>
+  </view>
+
+  <!-- 24小时预报 -->
+  <scroll-view scroll-x class="hourly-scroll">
+    <view wx:for="{{hourly}}" class="hour-item">
+      <text>{{item.time}}</text>
+      <image src="../../images/{{item.icon}}.png" class="weather-icon"/>
+      <text>{{item.temp}}°</text>
+    </view>
+  </scroll-view>
+
+  <!-- 15天预报 -->
+  <view class="daily-box">
+    <view wx:for="{{daily15}}" class="day-item">
+      <text>{{item.date}}</text>
+      <view class="weather-icons">
+        <image src="../../images/{{item.dayIcon}}.png" class="icon-small"/>
+        <image src="../../images/{{item.nightIcon}}.png" class="icon-small"/>
+      </view>
+      <text>{{item.temp}}</text>
+    </view>
+  </view>
+
+  <!-- 生活指数 -->
+  <view class="life-index">
+    <view wx:for="{{lifeIndexes}}" class="index-item">
+      <text class="index-name">{{item.name}}</text>
+      <text class="index-value">{{item.value}}</text>
+    </view>
+  </view>
+
+  <!-- 空气质量 -->
+  <view class="air-quality">
+    <text>空气质量：{{airQuality.level}}（{{airQuality.value}}）</text>
+  </view>
+</view>

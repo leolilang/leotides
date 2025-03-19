@@ -297,6 +297,11 @@ Page({
         });
     
         ctx.draw();
+    },
+    goToWeatherPage() {
+        wx.navigateTo({
+            url: '../weather/weather'
+        });
     }
     
 
