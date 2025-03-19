@@ -23,7 +23,6 @@ Page({
         userInfo: {},
         // 新增位置列表和当前选择的位置索引
         locationList: [
-            { name: '淀山湖-拦路港', url: 'https://www.chaoxibiao.net/tides/30.html' },
             { name: '上海-黄埔公园', url: 'https://www.chaoxibiao.net/tides/30.html' },
             { name: '上海-佘山', url: 'https://www.chaoxibiao.net/tides/26.html' },
             { name: '上海-崇明', url: 'https://www.chaoxibiao.net/tides/27.html' },
@@ -207,11 +206,14 @@ Page({
         const canvasWidth = 320; // 画布宽度
         const canvasHeight = 300; // 画布高度
         const padding = 40; // 内边距
-        const maxHeight = 400; // Y轴最大潮高
+    
+        // **动态计算潮高范围**
+        let maxHeight = Math.max(...tideHeightInfo.map(item => parseInt(item.tideHeight.replace('cm', '')))) * 1.2;
+        maxHeight = Math.min(maxHeight, 700); // 限制最大潮高，避免过大
         const minHeight = 0; // Y轴最小潮高
         const heightRange = maxHeight - minHeight;
     
-        // 时间转换为分钟数（用于计算X轴比例）
+        // 时间转换为分钟数
         const timeToMinutes = (time) => {
             const [hours, minutes] = time.split(':').map(Number);
             return hours * 60 + minutes;
@@ -221,7 +223,7 @@ Page({
         const maxTime = timeToMinutes("24:00");
         const totalTimeRange = maxTime - minTime;
     
-        // 计算各点的位置
+        // 计算各点位置
         const points = tideHeightInfo.map(item => {
             const x = padding + ((timeToMinutes(item.tideTime) - minTime) / totalTimeRange) * (canvasWidth - 2 * padding);
             const height = parseInt(item.tideHeight.replace('cm', ''));
@@ -237,7 +239,7 @@ Page({
         ctx.strokeStyle = '#000';
         ctx.stroke();
     
-        // Y轴标签（潮高）
+        // **优化 Y 轴标签**
         ctx.fillStyle = '#000';
         ctx.setFontSize(12);
         ctx.fillText('潮高(cm)', 5, padding - 5);
@@ -255,7 +257,7 @@ Page({
             ctx.fillText(label, x - 10, canvasHeight - 5);
         });
     
-        // **绘制波浪曲线（使用贝塞尔曲线平滑）**
+        // **绘制波浪曲线**
         ctx.beginPath();
         ctx.moveTo(points[0].x, points[0].y);
     
@@ -263,10 +265,10 @@ Page({
             let current = points[i];
             let next = points[i + 1];
     
-            let cp1x = (current.x + next.x) / 2; // 控制点 1 X 轴
-            let cp1y = current.y; // 控制点 1 Y 轴 (保持与当前点相同高度)
-            let cp2x = (current.x + next.x) / 2; // 控制点 2 X 轴
-            let cp2y = next.y; // 控制点 2 Y 轴 (保持与下一个点相同高度)
+            let cp1x = (current.x + next.x) / 2;
+            let cp1y = current.y;
+            let cp2x = (current.x + next.x) / 2;
+            let cp2y = next.y;
     
             ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, next.x, next.y);
         }
@@ -282,21 +284,20 @@ Page({
             ctx.fillStyle = point.highLowTide === "满潮" ? '#0000FF' : '#008000';
             ctx.fill();
     
-            // **动态调整文本位置，避免重叠**
+            // **优化文本位置，防止重叠**
             let labelYOffset = (index % 2 === 0) ? -15 : 15;
             let labelXOffset = (index === points.length - 1) ? -30 : 5;
     
-            // 确保满潮点的文本不会靠近曲线
             if (point.highLowTide === "满潮") {
                 labelYOffset -= 10;
             }
     
-            // 显示潮高信息
             ctx.fillStyle = '#000';
             ctx.fillText(`${point.tideTime} ${point.tideHeight}`, point.x + labelXOffset, point.y + labelYOffset);
         });
     
         ctx.draw();
     }
+    
 
 });
