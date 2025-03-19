@@ -9,10 +9,9 @@
         </view>
     </picker>
 </view>
-<view class="content-container">
+<!-- <view class="content-container">
   <rich-text nodes="{{htmlContent}}"></rich-text>
   <canvas canvas-id="tideWaveCanvas" style="width: 100%; height: 300px;"></canvas>
   <button class="profile-btn" bindtap="goToProfile">个人中心</button>
-  <!-- 添加天气按钮 -->
   <button class="weather-btn" bindtap="goToWeatherPage">天气</button>
-</view>
+</view> -->

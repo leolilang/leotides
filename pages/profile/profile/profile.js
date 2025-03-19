@@ -67,7 +67,7 @@ Page({
         });
         console.log('点击确认按钮，保存用户信息:', getApp().globalData.userInfo);
         // 跳转至主页
-        wx.redirectTo({
+        wx.switchTab({
             url: '../../home/home'
         });
     },
