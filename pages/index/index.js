@@ -1,4 +1,7 @@
 // miniprogram-1/pages/index/index.js
+
+const navigator = require('../../utils/navigator');
+
 Page({
     data: {
         userInfo: {
@@ -13,15 +16,11 @@ Page({
     },
     onLoad() {
         // 直接跳转到主页
-        wx.switchTab ({
-            url: '../home/home'
-        });
+        navigator.goToHome();
     },
     
     goToHomePage() {
-        wx.switchTab({
-            url: '../home/home'
-        });
+        navigator.goToHome();
     },
 
     onChooseAvatar(e) {

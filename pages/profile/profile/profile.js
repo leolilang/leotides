@@ -1,4 +1,6 @@
 // miniprogram-1/pages/profile/profile/profile.js
+const navigator = require('../../../utils/navigator');
+
 Page({
     data: {
         userInfo: {},
@@ -67,9 +69,7 @@ Page({
         });
         console.log('点击确认按钮，保存用户信息:', getApp().globalData.userInfo);
         // 跳转至主页
-        wx.switchTab({
-            url: '../../home/home'
-        });
+        navigator.goToHome();
     },
     // 退出登录逻辑
     onLogout() {
@@ -87,19 +87,9 @@ Page({
             title: '退出登录成功',
             icon: 'success'
         });
-        wx.switchTab({
-            url: '../../home/home'
-        });
+        navigator.goToHome();
     },
     goToWeatherPage() {
-        wx.switchTab({
-            url: '../weather/weather',
-            success: () => {
-                console.log('成功跳转到天气页面');
-            },
-            fail: err => {
-                console.error('跳转失败:', err);
-            }
-        });
+        navigator.goToWeather();
     }
 });

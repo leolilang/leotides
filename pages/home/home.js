@@ -1,6 +1,7 @@
 // home.js
 const { parse } = require('node-html-parser');
 const echarts = require('../../ec-canvas/echarts'); // 引入 echarts
+const navigator = require('../../utils/navigator');
 
 function initChart(canvas, width, height) {
     const chart = echarts.init(canvas, null, {
@@ -84,72 +85,7 @@ Page({
         this.loadLocationData(url);
     },
     goToProfile() {
-        const app = getApp();
-        if (!app.globalData.isLoggedIn) {
-            // 弹出登录提示窗口
-            wx.showModal({
-                title: '登录提示',
-                content: '请先登录以查看个人中心',
-                confirmText: '登录',
-                success: res => {
-                    if (res.confirm) {
-                        // 弹出带输入框的登录弹窗
-                        wx.showModal({
-                            title: '登录',
-                            content: '游客',
-                            editable: true,
-                            placeholderText: '请输入昵称',
-                            confirmText: '确定',
-                            cancelText: '取消',
-                            success: loginRes => {
-                                if (loginRes.confirm) {
-                                    const nickname = loginRes.content && loginRes.content.trim();
-                                    // 验证昵称长度
-                                    if (!nickname || nickname.length < 2 || nickname.length > 10) {
-                                        wx.showToast({
-                                            title: '请输入有效的昵称（2-10个字符）',
-                                            icon: 'none'
-                                        });
-                                        return;
-                                    }
-                                    // 保存昵称信息到本地存储，并更新全局状态
-                                    wx.setStorageSync('nickName', nickname);
-                                    app.globalData.isLoggedIn = true;
-                                    app.globalData.userInfo.nickName = nickname;
-                                    app.saveUserInfoToStorage(); // 保存用户信息和登录状态
-
-                                    wx.showToast({
-                                        title: '登录成功',
-                                        icon: 'success'
-                                    });
-                                    // 登录成功后跳转到个人中心页面
-                                    wx.switchTab ({
-                                        url: '../profile/profile/profile',
-                                        success: () => {
-                                            console.log('成功跳转到个人中心页面');
-                                        },
-                                        fail: err => {
-                                            console.error('跳转失败:', err);
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    }
-                }
-            });
-        } else {
-            // 已登录，直接跳转到个人中心页面
-            wx.switchTab ({
-                url: '../profile/profile/profile',
-                success: () => {
-                    console.log('成功跳转到个人中心页面');
-                },
-                fail: err => {
-                    console.error('跳转失败:', err);
-                }
-            });
-        }
+        navigator.goToProfile();
     },
 
     extractTideInfo(html) {
@@ -300,21 +236,10 @@ Page({
         ctx.draw();
     },
     goToWeatherPage() {
-        wx.switchTab({
-            url: '../weather/weather'
-        });
+        navigator.goToWeather();
     },
     goToHomePage() {
-        wx.switchTab({
-            url: '../home/home',
-            success: () => {
-                console.log('成功跳转到主页');
-            },
-            fail: err => {
-                console.error('跳转失败:', err);
-            }
-        });
+        navigator.goToHome();
     }
     
-
 });
