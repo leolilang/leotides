@@ -35,8 +35,13 @@ Page({
     },
     onLoad() {
         // 获取用户信息
+        const app = getApp();
         this.setData({
-            userInfo: getApp().globalData.userInfo
+            userInfo: app.globalData.userInfo || {
+                avatarUrl: '/images/default-avatar.png',
+                nickName: '游客',
+                intro: '' // 新增个人简介字段，防止 undefined
+            }
         });
         // 提取位置名称列表
         const locationNames = this.data.locationList.map(item => item.name);
@@ -83,9 +88,6 @@ Page({
         });
         const url = this.data.locationList[index].url;
         this.loadLocationData(url);
-    },
-    goToProfile() {
-        navigator.goToProfile();
     },
 
     extractTideInfo(html) {
@@ -234,12 +236,5 @@ Page({
         });
     
         ctx.draw();
-    },
-    goToWeatherPage() {
-        navigator.goToWeather();
-    },
-    goToHomePage() {
-        navigator.goToHome();
     }
-    
 });

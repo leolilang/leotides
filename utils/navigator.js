@@ -41,7 +41,7 @@ function goToProfile() {
                                 });
                                 // 登录成功后跳转到个人中心页面
                                 wx.switchTab({
-                                    url: '../profile/profile/profile',
+                                    url: '/pages/profile/profile/profile',
                                     success: () => {
                                         console.log('成功跳转到个人中心页面');
                                     },
@@ -58,7 +58,7 @@ function goToProfile() {
     } else {
         // 已登录，直接跳转到个人中心页面
         wx.switchTab({
-            url: '../profile/profile/profile',
+            url: '/pages/profile/profile/profile',
             success: () => {
                 console.log('成功跳转到个人中心页面');
             },
@@ -72,7 +72,7 @@ function goToProfile() {
 // 跳转到主页
 function goToHome() {
     wx.switchTab({
-        url: '../home/home',
+        url: '/pages/home/home',
         success: () => {
             console.log('成功跳转到主页');
         },
@@ -85,7 +85,7 @@ function goToHome() {
 // 跳转到天气
 function goToWeather() {
     wx.switchTab({
-        url: '../weather/weather',
+        url: '/pages/weather/weather',
         success: () => {
             console.log('成功跳转到天气');
         },
