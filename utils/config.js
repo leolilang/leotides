@@ -23,6 +23,7 @@ const config = {
     // Cache Configuration
     CACHE: {
         LOCATION_LIST: 'locationList',
+        LOCATION_LIST_EXPIRY: 'locationListExpiry',
         WEATHER_DATA: 'weatherData',
         TIDE_DATA: 'tideData',
         FAVORITES: 'favorites',
@@ -32,7 +33,7 @@ const config = {
     // Default Location
     DEFAULT_LOCATION: {
         name: '黄浦公园',
-        location: 'P2447',  // 舟山的 locationId
+        id: 'P2447',
         isFavorite: false
     },
 
@@ -41,7 +42,9 @@ const config = {
         TIMEOUT: 10000,
         FREE_API_RETRIES: 3,     // 免费接口重试3次
         PAID_API_RETRIES: 1,     // 付费接口只重试1次
-        RETRY_DELAY: 1000
+        RETRY_DELAY: 1000,
+        MAX_RETRIES: 3,  // 最大重试次数
+        BASE_URL: 'https://api.qweather.com/v7'  // API基础URL
     },
 
     // POI Configuration
@@ -49,6 +52,14 @@ const config = {
         TYPE: 'TSTA',  // 潮汐站点类型
         MAX_RESULTS: 10, // 默认返回结果数量
         ENDPOINT: '/poi/lookup' // POI查询端点
+    },
+
+    // Storage Keys
+    STORAGE_KEYS: {
+        USER_INFO: 'userInfo',
+        LOCATION_LIST: 'locationList',
+        FAVORITES: 'favorites',
+        LOCATION_LIST_EXPIRY: 'locationListExpiry'
     }
 };
 
@@ -152,8 +163,30 @@ const cache = {
 };
 
 module.exports = {
-    config,
-    buildApiUrl,
+    config: {
+        STORAGE_KEYS: {
+            USER_INFO: 'userInfo',
+            LOCATION_LIST: 'locationList',
+            FAVORITES: 'favorites',
+            LOCATION_LIST_EXPIRY: 'locationListExpiry'
+        },
+        CACHE: {
+            LOCATION_LIST: 'locationList',
+            LOCATION_LIST_EXPIRY: 'locationListExpiry',
+            TIDE_DATA: 'tideData',
+            FAVORITES: 'favorites'
+        },
+        REQUEST: {
+            MAX_RETRIES: 3,
+            TIMEOUT: 5000,
+            BASE_URL: 'https://api.qweather.com/v7'
+        },
+        DEFAULT_LOCATION: {
+            name: '黄浦公园',
+            id: 'P2447',
+            isFavorite: false
+        }
+    },
     request,
     cache
 }; 

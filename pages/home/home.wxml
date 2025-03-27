@@ -23,7 +23,13 @@
 
     <!-- 日期选择器 -->
     <view class="date-picker-section">
-        <picker mode="date" value="{{selectedDate}}" start="{{selectedDate}}" end="{{getMaxDate()}}" bindchange="onDateChange">
+        <picker 
+            mode="date" 
+            value="{{selectedDate}}"
+            start="{{getMinDate()}}"
+            end="{{getMaxDate()}}"
+            bindchange="onDateChange"
+        >
             <view class="date-content">
                 <text class="selected-date">{{selectedDate}}</text>
                 <text class="date-arrow">▼</text>
