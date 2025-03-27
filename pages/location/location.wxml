@@ -1,0 +1,32 @@
+<view class="container">
+    <!-- 搜索框 -->
+    <view class="search-box">
+        <input type="text" 
+               placeholder="搜索城市" 
+               value="{{keyword}}"
+               bindinput="onKeywordInput"
+               bindconfirm="onSearch"/>
+        <view class="search-btn" bindtap="onSearch">
+            <text>搜索</text>
+        </view>
+    </view>
+
+    <!-- 搜索结果列表 -->
+    <view class="location-list">
+        <view class="location-item" 
+              wx:for="{{searchResults}}" 
+              wx:key="id"
+              bindtap="onLocationSelect"
+              data-location="{{item}}">
+            <view class="location-info">
+                <text class="location-name">{{item.name}}</text>
+                <text class="location-city">{{item.adm2}}</text>
+            </view>
+        </view>
+    </view>
+
+    <!-- 加载状态 -->
+    <view class="loading" wx:if="{{loading}}">
+        <text>搜索中...</text>
+    </view>
+</view> 

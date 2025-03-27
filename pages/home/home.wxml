@@ -1,17 +1,86 @@
 <!--home.wxml-->
-<view class="navigation-bar">
-    <view class="user-avatar">
-        <image src="{{userInfo.avatarUrl}}" mode="aspectFit"></image>
-    </view>
-    <picker bindchange="onLocationChange" value="{{currentLocationIndex}}" range="{{locationNames}}">
-        <view class="picker">
-            {{locationList[currentLocationIndex].name}}
+<view class="container">
+    <!-- 顶部导航栏 -->
+    <view class="navigation-bar">
+        <view class="location-section">
+            <view class="location-info" bindtap="onChangeLocation">
+                <text class="location-name">{{locationList[currentLocationIndex].name}}</text>
+                <text class="location-arrow">▼</text>
+            </view>
         </view>
-    </picker>
-</view>
-<view class="content-container">
-  <rich-text nodes="{{htmlContent}}"></rich-text>
-  <canvas canvas-id="tideWaveCanvas" style="width: 100%; height: 300px;"></canvas>
-  <!-- <button class="profile-btn" bindtap="goToProfile">个人中心</button>
-  <button class="weather-btn" bindtap="goToWeatherPage">天气</button> -->
+        <view class="action-section">
+            <view class="favorite-btn" bindtap="toggleFavorite">
+                <image class="action-icon" 
+                       src="{{isFavorite ? '/images/favorite-filled.png' : '/images/favorite.png'}}" 
+                       mode="aspectFit">
+                </image>
+            </view>
+            <view class="station-btn" bindtap="onOpenStationSearch">
+                <text>潮汐站点</text>
+            </view>
+        </view>
+    </view>
+
+    <!-- 日期选择器 -->
+    <view class="date-picker-section">
+        <picker mode="date" value="{{selectedDate}}" start="{{selectedDate}}" end="{{getMaxDate()}}" bindchange="onDateChange">
+            <view class="date-content">
+                <text class="selected-date">{{selectedDate}}</text>
+                <text class="date-arrow">▼</text>
+            </view>
+        </picker>
+    </view>
+
+    <!-- 当前潮汐状态 -->
+    <view class="current-tide-section" wx:if="{{tideData && tideData.tideHourly && tideData.tideHourly.length > 0}}">
+        <view class="tide-status">
+            <text class="status-text">{{tideData.tideHourly[0].type === 'H' ? '涨潮' : '退潮'}}</text>
+            <text class="status-time">当前时间</text>
+        </view>
+        <view class="tide-height">
+            <text class="height-value">{{tideData.tideHourly[0].height}}</text>
+            <text class="height-unit">米</text>
+        </view>
+    </view>
+
+    <!-- 潮汐图表 -->
+    <view class="chart-section">
+        <view class="chart-container">
+            <ec-canvas id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ ec }}"></ec-canvas>
+        </view>
+    </view>
+
+    <!-- 潮汐时间表 -->
+    <view class="tide-table-section">
+        <view class="table-header">
+            <text class="header-title">潮汐时间表</text>
+            <text class="header-date">{{selectedDate}}</text>
+        </view>
+        <view class="table-content">
+            <view class="table-row" wx:for="{{tideDetails}}" wx:key="time">
+                <view class="row-time">
+                    <text class="time-text">{{item.time}}</text>
+                </view>
+                <view class="row-type">
+                    <text class="type-tag {{item.type === '满潮' ? 'high-tide' : 'low-tide'}}">{{item.type}}</text>
+                </view>
+                <view class="row-height">
+                    <text class="height-text">{{item.height}}</text>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 加载状态 -->
+    <view class="loading-section" wx:if="{{loading}}">
+        <view class="loading-spinner"></view>
+        <text class="loading-text">加载中...</text>
+        <text class="retry-text" wx:if="{{retryCount > 0}}">重试次数：{{retryCount}}/{{maxRetries}}</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-section" wx:if="{{!loading && (!tideData || !tideData.tideTable || tideData.tideTable.length === 0)}}">
+        <image class="empty-icon" src="/images/empty.png" mode="aspectFit"></image>
+        <text class="empty-text">暂无潮汐数据</text>
+    </view>
 </view>

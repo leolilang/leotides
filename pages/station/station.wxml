@@ -1,0 +1,53 @@
+<view class="container">
+    <!-- 搜索框 -->
+    <view class="search-box">
+        <input type="text" 
+               placeholder="请输入城市名称" 
+               value="{{keyword}}"
+               bindinput="onKeywordInput"
+               bindconfirm="onSearch"/>
+        <view class="search-btn" bindtap="onSearch">
+            <text>搜索</text>
+        </view>
+    </view>
+
+    <!-- 站点列表 -->
+    <view class="station-list" wx:if="{{stations.length > 0}}">
+        <view class="station-item" 
+              wx:for="{{stations}}" 
+              wx:key="id"
+              bindtap="onStationSelect" 
+              data-station="{{item}}">
+            <view class="station-info">
+                <text class="station-name">{{item.name}}</text>
+                <text class="station-area">{{item.adm1}} · {{item.adm2}}</text>
+            </view>
+            <view class="station-meta">
+                <text class="station-rank">评分: {{item.rank}}</text>
+            </view>
+        </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{!loading && stations.length === 0}}">
+        <text>暂无潮汐站点数据</text>
+    </view>
+
+    <!-- 加载状态 -->
+    <view class="loading-state" wx:if="{{loading}}">
+        <text>搜索中...</text>
+    </view>
+
+    <!-- 搜索建议 -->
+    <view class="search-suggestions" wx:if="{{!loading && keyword && stations.length === 0}}">
+        <view class="suggestion-title">搜索建议</view>
+        <view class="suggestion-list">
+            <view class="suggestion-item">
+                <text>• 尝试输入完整的城市名称，如"上海"、"舟山"</text>
+            </view>
+            <view class="suggestion-item">
+                <text>• 确保输入的是沿海城市名称</text>
+            </view>
+        </view>
+    </view>
+</view> 

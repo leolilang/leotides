@@ -1,0 +1,41 @@
+<!-- about.wxml -->
+<view class="about-container">
+    <!-- 应用信息 -->
+    <view class="app-info">
+        <image class="app-logo" src="/images/logo.png" mode="aspectFit"></image>
+        <text class="app-name">{{appInfo.name}}</text>
+        <text class="app-version">版本 {{version}}</text>
+        <text class="app-description">{{appInfo.description}}</text>
+    </view>
+
+    <!-- 功能列表 -->
+    <view class="function-list">
+        <view class="function-item" bindtap="checkUpdate">
+            <text class="function-title">检查更新</text>
+            <text class="arrow">></text>
+        </view>
+        <view class="function-item" bindtap="showUserAgreement">
+            <text class="function-title">用户协议</text>
+            <text class="arrow">></text>
+        </view>
+        <view class="function-item" bindtap="showPrivacyPolicy">
+            <text class="function-title">隐私政策</text>
+            <text class="arrow">></text>
+        </view>
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="contact-info">
+        <text class="contact-title">联系我们</text>
+        <view class="contact-content" bindtap="copyContact">
+            <text class="contact-text">{{appInfo.contact}}</text>
+            <text class="copy-hint">点击复制</text>
+        </view>
+    </view>
+
+    <!-- 版权信息 -->
+    <view class="copyright">
+        <text>Copyright © 2024 潮汐助手</text>
+        <text>All Rights Reserved</text>
+    </view>
+</view> 

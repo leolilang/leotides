@@ -1,7 +1,8 @@
 // home.js
-const { parse } = require('node-html-parser');
-const echarts = require('../../ec-canvas/echarts'); // 引入 echarts
+const { config, request, cache } = require('../../utils/config');
+const echarts = require('../../ec-canvas/echarts');
 const navigator = require('../../utils/navigator');
+const app = getApp();
 
 function initChart(canvas, width, height) {
     const chart = echarts.init(canvas, null, {
@@ -9,241 +10,514 @@ function initChart(canvas, width, height) {
         height: height
     });
     canvas.setChart(chart);
-
     return chart;
 }
 
 Page({
     data: {
-        title: '淀山湖 - 拦路港潮汐时刻表',
+        title: '潮汐信息',
         htmlContent: '',
         ec: {
             onInit: initChart
         },
-        tideData: [], // 存储潮汐
-        userInfo: {},
-        // 新增位置列表和当前选择的位置索引
-        locationList: [
-            { name: '上海-黄埔公园', url: 'https://www.chaoxibiao.net/tides/30.html' },
-            { name: '上海-佘山', url: 'https://www.chaoxibiao.net/tides/26.html' },
-            { name: '上海-崇明', url: 'https://www.chaoxibiao.net/tides/27.html' },
-            { name: '上海-吴淞', url: 'https://www.chaoxibiao.net/tides/347.html' },
-            { name: '上海-奉贤', url: 'https://www.chaoxibiao.net/tides/504.html' }
-        ],
+        loading: false,
+        retryCount: 0,
+        maxRetries: config.REQUEST.MAX_RETRIES,
+        selectedDate: new Date().toISOString().split('T')[0],
+        locationList: [],
         currentLocationIndex: 0,
-        locationNames: [], // 存储位置名称列表
+        locationNames: [],
+        tideData: null,
+        tideDetails: [],
+        userInfo: {},
+        isFavorite: false,
+        searchKeyword: ''
     },
+
     onLoad() {
-        // 获取用户信息
-        const app = getApp();
+        this.loadLocationList();
         this.setData({
             userInfo: app.globalData.userInfo || {
                 avatarUrl: '/images/default-avatar.png',
                 nickName: '游客',
-                intro: '' // 新增个人简介字段，防止 undefined
+                intro: ''
             }
         });
-        // 提取位置名称列表
-        const locationNames = this.data.locationList.map(item => item.name);
-        this.setData({ locationNames });
-        // 加载默认位置
-        this.loadLocationData(this.data.locationList[this.data.currentLocationIndex].url);
     },
+
     onShow() {
-        // 从本地存储中读取最新的用户信息
         const userInfo = wx.getStorageSync('userInfo');
         if (userInfo) {
+            this.setData({ userInfo });
+        }
+    },
+
+    // 加载位置列表
+    async loadLocationList() {
+        try {
+            // 从缓存获取位置列表
+            let locationList = cache.get(config.CACHE.LOCATION_LIST);
+            
+            // 如果没有缓存，使用舟山-沈家门作为默认位置
+            if (!locationList) {
+                locationList = [{
+                    name: '舟山-沈家门',
+                    location: '101211106',
+                    isFavorite: false
+                }];
+                cache.set(config.CACHE.LOCATION_LIST, locationList);
+            }
+
+            const locationNames = locationList.map(item => item.name);
+            
             this.setData({
-                userInfo: userInfo
+                locationList,
+                locationNames
+            });
+
+            // 加载默认位置数据
+            await this.loadTideData(locationList[this.data.currentLocationIndex]);
+        } catch (error) {
+            console.error('加载位置列表失败:', error);
+            wx.showToast({
+                title: '加载位置列表失败',
+                icon: 'none'
             });
         }
     },
-    loadLocationData(url) {
-        // 发起请求获取对应位置的内容
-        wx.request({
-            url: url,
-            success: function (res) {
-                if (res.statusCode === 200) {
-                    const html = res.data;
-                    // 使用 node-html-parser 解析 HTML
-                    const root = parse(html);
-                    const contentDiv = root.querySelector('#content');
-                    if (contentDiv) {
-                        const contentHtml = contentDiv.outerHTML;
-                        this.setData({
-                            htmlContent: contentHtml
-                        });
-                        console.log('提取到的 content 内容:', contentHtml);
 
-                        // 解析潮汐
-                        const tideData = this.extractTideInfo(contentHtml);
-                        console.log('解析到的潮汐内容:', tideData);
+    // 加载潮汐数据
+    async loadTideData(location) {
+        this.setData({ loading: true });
+        try {
+            // 格式化日期为 YYYYMMDD
+            const formattedDate = this.data.selectedDate.replace(/-/g, '');
+            
+            const params = {
+                location: location.location,
+                date: formattedDate  // 使用正确的日期格式
+            };
 
-                        this.drawTideWave(tideData);
-                    }
-                } else {
-                    console.error('请求失败，状态码:', res.statusCode);
-                }
-            }.bind(this),
-            fail: function (err) {
-                console.error('请求失败:', err);
+            const tideData = await request(config.ENDPOINTS.TIDE, params);
+            
+            if (tideData.code === '200') {
+                this.updateChart(tideData);
+                const tideDetails = this.processTideDetails(tideData);
+                
+                this.setData({
+                    tideData,
+                    tideDetails,
+                    loading: false
+                });
+
+                cache.set(`${config.CACHE.TIDE_DATA}_${location.location}_${formattedDate}`, tideData);
+            } else {
+                throw new Error(tideData.msg || '获取潮汐数据失败');
             }
-        });
+        } catch (error) {
+            console.error('加载潮汐数据失败:', error);
+            wx.showToast({
+                title: '加载潮汐数据失败',
+                icon: 'none'
+            });
+            this.setData({ loading: false });
+        }
     },
+
+    // 处理潮汐详情数据
+    processTideDetails(tideData) {
+        if (!tideData || !tideData.tideTable) return [];
+        
+        return tideData.tideTable.map(item => ({
+            time: item.fxTime.split('T')[1].slice(0, 5),
+            height: item.height + 'm',
+            type: item.type === 'H' ? '满潮' : '干潮',
+            updateTime: new Date(item.fxTime).toLocaleString()
+        }));
+    },
+
+    // 更新图表
+    updateChart(tideData) {
+        const chart = this.selectComponent('#mychart-dom-bar');
+        if (!chart) return;
+
+        const option = {
+            title: {
+                text: '24小时潮汐预报',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: '{b}<br/>潮高: {c}米',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            toolbox: {
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    restore: {},
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: tideData.tideTable.map(item => this.formatTime(item.fxTime)),
+                axisLabel: {
+                    interval: 2,
+                    rotate: 45
+                },
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: '潮高(米)',
+                min: Math.min(...tideData.tideTable.map(item => parseFloat(item.height))) - 0.5,
+                max: Math.max(...tideData.tideTable.map(item => parseFloat(item.height))) + 0.5,
+                splitLine: {
+                    lineStyle: {
+                        type: 'dashed'
+                    }
+                }
+            },
+            series: [{
+                data: tideData.tideTable.map(item => parseFloat(item.height)),
+                type: 'line',
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 8,
+                lineStyle: {
+                    color: '#4CAF50',
+                    width: 3
+                },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgba(76, 175, 80, 0.3)'
+                    }, {
+                        offset: 1,
+                        color: 'rgba(76, 175, 80, 0.1)'
+                    }])
+                },
+                markPoint: {
+                    data: tideData.tideTable.map(item => ({
+                        name: item.type === 'H' ? '满潮' : '干潮',
+                        value: parseFloat(item.height),
+                        x: this.formatTime(item.fxTime),
+                        y: parseFloat(item.height)
+                    }))
+                }
+            }],
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '15%',
+                containLabel: true
+            }
+        };
+
+        chart.setOption(option);
+    },
+
+    // 日期选择改变
+    onDateChange(e) {
+        const selectedDate = e.detail.value;
+        this.setData({ selectedDate });
+        this.loadTideData(this.data.locationList[this.data.currentLocationIndex]);
+    },
+
+    // 位置选择改变
     onLocationChange(e) {
         const index = e.detail.value;
-        this.setData({
-            currentLocationIndex: index
-        });
-        const url = this.data.locationList[index].url;
-        this.loadLocationData(url);
+        this.setData({ currentLocationIndex: index });
+        this.loadTideData(this.data.locationList[index]);
     },
 
-    extractTideInfo(html) {
-        const doc = parse(html);
-    
-        // 提取潮汐位置和时间信息
-        const locationAndTimeInfo = [];
-        const title = doc.querySelector('h1').textContent;
-        const dateInfo = doc.querySelector('#test1').textContent.trim().replace(/\s+/g, '');
-        const changeDateButtonText = doc.querySelector('#changeDate').textContent;
-        locationAndTimeInfo.push({
-            title,
-            dateInfo,
-            changeDateButtonText
-        });
-    
-        // 提取潮汐时间段信息
-        const tideTimeTable = doc.querySelectorAll('.tidesPoint')[0];
-        const tideTimeRows = tideTimeTable.querySelectorAll('tr');
-        const tideTimeInfo = [];
-        tideTimeRows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            if (cells.length === 2) {
-                const type = cells[0].textContent;
-                const time = cells[1].textContent;
-                tideTimeInfo.push({ type, time });
+    // 获取最大可选日期
+    getMaxDate() {
+        const date = new Date();
+        date.setDate(date.getDate() + 10);
+        return date.toISOString().split('T')[0];
+    },
+
+    // 搜索潮汐站点
+    async searchTideStations(keyword) {
+        try {
+            const params = {
+                location: keyword,
+                type: config.POI.TYPE,
+                number: config.POI.MAX_RESULTS
+            };
+
+            const response = await request(config.ENDPOINTS.POI_LOOKUP, params, {
+                isGeo: true,
+                header: {
+                    'Authorization': `Bearer ${config.API_KEY}`
+                }
+            });
+
+            if (response.code === '200' && response.poi && response.poi.length > 0) {
+                // 转换 POI 数据为位置列表格式
+                return response.poi.map(item => ({
+                    name: `${item.adm2}-${item.name}`, // 城市-站点名称
+                    location: item.id,  // 使用POI的id作为location
+                    isFavorite: false,
+                    lat: item.lat,
+                    lon: item.lon,
+                    adm1: item.adm1,    // 省份
+                    adm2: item.adm2,    // 城市
+                    country: item.country,
+                    timezone: item.tz,
+                    rank: item.rank
+                }));
+            } else {
+                wx.showToast({
+                    title: '未找到潮汐站点',
+                    icon: 'none'
+                });
+                return [];
             }
+        } catch (error) {
+            console.error('搜索潮汐站点失败:', error);
+            wx.showToast({
+                title: '搜索潮汐站点失败',
+                icon: 'none'
+            });
+            return [];
+        }
+    },
+
+    // 添加新位置
+    async addNewLocation(keyword) {
+        if (!keyword.trim()) {
+            wx.showToast({
+                title: '请输入位置名称',
+                icon: 'none'
+            });
+            return;
+        }
+
+        this.setData({ loading: true });
+        try {
+            const newLocations = await this.searchTideStations(keyword);
+            if (newLocations && newLocations.length > 0) {
+                // 检查是否已存在相同位置
+                const existingLocations = new Set(this.data.locationList.map(item => item.location));
+                const uniqueNewLocations = newLocations.filter(item => !existingLocations.has(item.location));
+
+                if (uniqueNewLocations.length === 0) {
+                    wx.showToast({
+                        title: '该位置已存在',
+                        icon: 'none'
+                    });
+                    return;
+                }
+
+                // 更新位置列表
+                const locationList = [...this.data.locationList, ...uniqueNewLocations];
+                const locationNames = locationList.map(item => item.name);
+
+                // 保存到缓存
+                cache.set(config.CACHE.LOCATION_LIST, locationList);
+
+                // 更新状态
+                this.setData({
+                    locationList,
+                    locationNames,
+                    currentLocationIndex: locationList.length - 1, // 自动选中新添加的位置
+                    searchKeyword: '' // 清空搜索框
+                });
+
+                // 加载新位置的数据
+                await this.loadTideData(locationList[locationList.length - 1]);
+
+                wx.showToast({
+                    title: '添加位置成功',
+                    icon: 'success'
+                });
+            }
+        } catch (error) {
+            console.error('添加新位置失败:', error);
+            wx.showToast({
+                title: '添加位置失败',
+                icon: 'none'
+            });
+        } finally {
+            this.setData({ loading: false });
+        }
+    },
+
+    // 收藏/取消收藏位置
+    toggleFavorite() {
+        const locationList = this.data.locationList;
+        const currentLocation = locationList[this.data.currentLocationIndex];
+        currentLocation.isFavorite = !currentLocation.isFavorite;
+        
+        // 更新位置列表缓存
+        cache.set(config.CACHE.LOCATION_LIST, locationList);
+        
+        // 更新收藏列表
+        let favorites = cache.get(config.CACHE.FAVORITES) || [];
+        
+        if (currentLocation.isFavorite) {
+            favorites.unshift({
+                title: currentLocation.name,
+                time: new Date().toLocaleString(),
+                location: currentLocation.location,
+                lat: currentLocation.lat,
+                lon: currentLocation.lon
+            });
+        } else {
+            favorites = favorites.filter(item => item.location !== currentLocation.location);
+        }
+        
+        // 更新收藏缓存
+        cache.set(config.CACHE.FAVORITES, favorites);
+
+        this.setData({
+            locationList,
+            isFavorite: currentLocation.isFavorite
         });
-    
-        // 提取潮高信息
-        const tideHeightTable = doc.querySelectorAll('.tidesPoint')[1];
-        const tideHeightRows = tideHeightTable.querySelectorAll('tr');
-        const highLowTide = Array.from(tideHeightRows[0].querySelectorAll('td')).slice(1).map(cell => cell.textContent);
-        const tideTime = Array.from(tideHeightRows[1].querySelectorAll('td')).slice(1).map(cell => cell.textContent);
-        const tideHeight = Array.from(tideHeightRows[2].querySelectorAll('td')).slice(1).map(cell => cell.textContent);
-        const tideHeightInfo = [];
-        for (let i = 0; i < highLowTide.length; i++) {
-            tideHeightInfo.push({
-                highLowTide: highLowTide[i],
-                tideTime: tideTime[i],
-                tideHeight: tideHeight[i]
+
+        wx.showToast({
+            title: currentLocation.isFavorite ? '已收藏' : '已取消收藏',
+            icon: 'success'
+        });
+    },
+
+    // 格式化时间
+    formatTime(timeStr) {
+        return timeStr.split('T')[1].slice(0, 5);
+    },
+
+    // 搜索输入处理
+    onSearchInput(e) {
+        this.setData({
+            searchKeyword: e.detail.value.trim()
+        });
+    },
+
+    // 搜索确认处理
+    async onSearchConfirm() {
+        const keyword = this.data.searchKeyword;
+        if (keyword) {
+            this.setData({ loading: true });
+            try {
+                await this.addNewLocation(keyword);
+                this.setData({ 
+                    searchKeyword: '',
+                    loading: false
+                });
+            } catch (error) {
+                this.setData({ loading: false });
+            }
+        }
+    },
+
+    // 处理加载错误
+    handleLoadError() {
+        if (this.data.retryCount < this.data.maxRetries) {
+            this.setData({
+                retryCount: this.data.retryCount + 1
+            });
+            console.log(`重试加载潮汐数据 (${this.data.retryCount}/${this.data.maxRetries})`);
+            setTimeout(() => {
+                this.loadTideData(this.data.locationList[this.data.currentLocationIndex]);
+            }, 1000 * this.data.retryCount);
+        } else {
+            this.setData({ 
+                loading: false,
+                retryCount: 0
+            });
+            wx.showToast({
+                title: '加载失败，请稍后重试',
+                icon: 'none',
+                duration: 2000
             });
         }
-    
-        return {
-            locationAndTimeInfo,
-            tideTimeInfo,
-            tideHeightInfo
-        };
     },
 
-    drawTideWave(data) {
-        const ctx = wx.createCanvasContext('tideWaveCanvas');
-        const { tideHeightInfo } = data;
-        const canvasWidth = 320; // 画布宽度
-        const canvasHeight = 300; // 画布高度
-        const padding = 40; // 内边距
-    
-        // **动态计算潮高范围**
-        let maxHeight = Math.max(...tideHeightInfo.map(item => parseInt(item.tideHeight.replace('cm', '')))) * 1.2;
-        maxHeight = Math.min(maxHeight, 700); // 限制最大潮高，避免过大
-        const minHeight = 0; // Y轴最小潮高
-        const heightRange = maxHeight - minHeight;
-    
-        // 时间转换为分钟数
-        const timeToMinutes = (time) => {
-            const [hours, minutes] = time.split(':').map(Number);
-            return hours * 60 + minutes;
-        };
-    
-        const minTime = timeToMinutes("00:00");
-        const maxTime = timeToMinutes("24:00");
-        const totalTimeRange = maxTime - minTime;
-    
-        // 计算各点位置
-        const points = tideHeightInfo.map(item => {
-            const x = padding + ((timeToMinutes(item.tideTime) - minTime) / totalTimeRange) * (canvasWidth - 2 * padding);
-            const height = parseInt(item.tideHeight.replace('cm', ''));
-            const y = canvasHeight - padding - ((height - minHeight) / heightRange) * (canvasHeight - 2 * padding);
-            return { x, y, ...item };
+    // 点击更改位置图标
+    onChangeLocation() {
+        wx.navigateTo({
+            url: '/pages/location/location'
         });
-    
-        // 绘制坐标轴
-        ctx.beginPath();
-        ctx.moveTo(padding, padding);
-        ctx.lineTo(padding, canvasHeight - padding);
-        ctx.lineTo(canvasWidth - padding, canvasHeight - padding);
-        ctx.strokeStyle = '#000';
-        ctx.stroke();
-    
-        // **优化 Y 轴标签**
-        ctx.fillStyle = '#000';
-        ctx.setFontSize(12);
-        ctx.fillText('潮高(cm)', 5, padding - 5);
-        for (let i = 0; i <= 4; i++) {
-            let yLabel = minHeight + (heightRange / 4) * i;
-            let y = canvasHeight - padding - (i * (canvasHeight - 2 * padding) / 4);
-            ctx.fillText(yLabel.toFixed(0), 10, y + 3);
+    },
+
+    // 更新位置数据（由位置搜索页面调用）
+    async updateLocation(location) {
+        this.setData({ loading: true });
+        try {
+            await this.loadTideData(location);
+            // 更新位置列表
+            const locationList = [location, ...this.data.locationList];
+            const locationNames = locationList.map(item => item.name);
+            
+            this.setData({
+                locationList,
+                locationNames,
+                currentLocationIndex: 0
+            });
+
+            // 更新缓存
+            cache.set(config.CACHE.LOCATION_LIST, locationList);
+        } catch (error) {
+            console.error('更新位置失败:', error);
+            wx.showToast({
+                title: '更新位置失败',
+                icon: 'none'
+            });
+        } finally {
+            this.setData({ loading: false });
         }
-    
-        // X轴标签（时间）
-        ctx.fillText('时间', canvasWidth - 35, canvasHeight - 5);
-        const timeLabels = ['00:00', '06:00', '12:00', '18:00', '24:00'];
-        timeLabels.forEach((label, index) => {
-            let x = padding + index * ((canvasWidth - 2 * padding) / 4);
-            ctx.fillText(label, x - 10, canvasHeight - 5);
+    },
+
+    // 打开站点搜索页面
+    onOpenStationSearch() {
+        wx.navigateTo({
+            url: '/pages/station/station'
         });
-    
-        // **绘制波浪曲线**
-        ctx.beginPath();
-        ctx.moveTo(points[0].x, points[0].y);
-    
-        for (let i = 0; i < points.length - 1; i++) {
-            let current = points[i];
-            let next = points[i + 1];
-    
-            let cp1x = (current.x + next.x) / 2;
-            let cp1y = current.y;
-            let cp2x = (current.x + next.x) / 2;
-            let cp2y = next.y;
-    
-            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, next.x, next.y);
+    },
+
+    // 更新站点数据（由站点搜索页面调用）
+    async updateStationData(station) {
+        this.setData({ loading: true });
+        try {
+            // 更新位置列表
+            const locationList = [station, ...this.data.locationList];
+            const locationNames = locationList.map(item => item.name);
+            
+            this.setData({
+                locationList,
+                locationNames,
+                currentLocationIndex: 0
+            });
+
+            // 更新缓存
+            cache.set(config.CACHE.LOCATION_LIST, locationList);
+
+            // 加载新站点的潮汐数据
+            await this.loadTideData(station);
+
+            wx.showToast({
+                title: '更新成功',
+                icon: 'success'
+            });
+        } catch (error) {
+            console.error('更新站点数据失败:', error);
+            wx.showToast({
+                title: '更新失败',
+                icon: 'none'
+            });
+        } finally {
+            this.setData({ loading: false });
         }
-    
-        ctx.strokeStyle = '#008000';
-        ctx.setLineWidth(2);
-        ctx.stroke();
-    
-        // **绘制点**
-        points.forEach((point, index) => {
-            ctx.beginPath();
-            ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
-            ctx.fillStyle = point.highLowTide === "满潮" ? '#0000FF' : '#008000';
-            ctx.fill();
-    
-            // **优化文本位置，防止重叠**
-            let labelYOffset = (index % 2 === 0) ? -15 : 15;
-            let labelXOffset = (index === points.length - 1) ? -30 : 5;
-    
-            if (point.highLowTide === "满潮") {
-                labelYOffset -= 10;
-            }
-    
-            ctx.fillStyle = '#000';
-            ctx.fillText(`${point.tideTime} ${point.tideHeight}`, point.x + labelXOffset, point.y + labelYOffset);
-        });
-    
-        ctx.draw();
     }
 });

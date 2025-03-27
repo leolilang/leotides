@@ -1,0 +1,29 @@
+<!-- history.wxml -->
+<view class="history-container">
+    <view class="header">
+        <text class="title">浏览历史</text>
+        <text class="clear-btn" bindtap="clearHistory">清空</text>
+    </view>
+
+    <view class="history-list" wx:if="{{!loading && history.length > 0}}">
+        <view class="history-item" wx:for="{{history}}" wx:key="index">
+            <view class="history-content">
+                <text class="history-title">{{item.title}}</text>
+                <text class="history-time">{{item.time}}</text>
+            </view>
+            <view class="history-actions">
+                <text class="delete-btn" data-index="{{index}}" bindtap="deleteHistoryItem">删除</text>
+            </view>
+        </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{!loading && history.length === 0}}">
+        <image class="empty-icon" src="/images/empty.png" mode="aspectFit"></image>
+        <text class="empty-text">暂无浏览历史</text>
+    </view>
+
+    <view class="loading" wx:if="{{loading}}">
+        <image class="loading-icon" src="/images/loading.gif" mode="aspectFit"></image>
+        <text>加载中...</text>
+    </view>
+</view> 

@@ -1,5 +1,6 @@
 {
+    "navigationBarTitleText": "潮汐助手",
     "usingComponents": {
         "ec-canvas": "../../ec-canvas/ec-canvas"
     }
-  }
+}
