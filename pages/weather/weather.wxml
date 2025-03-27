@@ -1,47 +1,85 @@
-<!-- pages/weather/weather.wxml -->
 <view class="container">
-  <!-- 当前天气 -->
-  <view class="current-box">
-  上海当前
-    <text class="current-temp">{{current.temp}}°</text>
-    <view class="current-details">
-      <text>{{current.weather}}</text>
-      <text>湿度 {{current.humidity}}</text>
-      <text>{{current.wind}}</text>
-    </view>
+  <view class="current-weather">
+    <text class="city">{{currentCity}}</text>
+    <image src="/images/arrow-down.png" class="arrow-icon"  bindtap="chooseCity" ></image>
+    <view class="space"></view>
+    <image class="weather-icon" src="{{currentWeather.icon}}"></image>
+    <text class="weather"> {{currentWeather.weather}} </text>
+    <text class="temp">{{currentWeather.temp}} </text>
+    <text class="humidity">湿度:{{currentWeather.humidity}} </text>
+    <text class="wind">{{currentWeather.windDir}}{{currentWeather.windScale}}</text>
   </view>
 
-  <!-- 24小时预报 -->
-  <scroll-view scroll-x class="hourly-scroll">
-    <view wx:for="{{hourly}}" class="hour-item">
-      <text>{{item.time}}</text>
-      <image src="../../images/{{item.icon}}.png" class="weather-icon"/>
-      <text>{{item.temp}}°</text>
-    </view>
-  </scroll-view>
+  <!-- 7日天气预报折线图 -->
+  <!-- <view class="chart-container">
+    <canvas canvas-id="weatherChart" class="weather-chart"></canvas>
+  </view> -->
+<!-- 7日天气预报表格 -->
+  <view class="forecast-container">
+  <view class="forecast-header">
+    <text class="header-cell">日期</text>
+    <text class="header-cell">天气</text>
+    <text class="header-cell">温度</text>
+    <text class="header-cell">风向</text>
+  </view>
 
-  <!-- 15天预报 -->
-  <view class="daily-box">
-    <view wx:for="{{daily15}}" class="day-item">
-      <text>{{item.date}}</text>
-      <view class="weather-icons">
-        <image src="../../images/{{item.dayIcon}}.png" class="icon-small"/>
-        <image src="../../images/{{item.nightIcon}}.png" class="icon-small"/>
+  <block wx:for="{{dailyForecast}}" wx:key="index">
+    <view class="forecast-row">
+      <!-- 日期 & 星期 -->
+      <view class="forecast-cell">
+        <text class="date-text">{{item.date}}</text>
+        <text class="weekday-text">{{item.weekday}}</text>
       </view>
-      <text>{{item.temp}}</text>
+
+      <!-- 天气图标 & 天气状况 -->
+      <view class="forecast-cell weather-cell">
+        <image class="weather-icon" src="{{item.icon}}" mode="aspectFit"></image>
+        <text class="weather-text">{{item.textDay}}</text>
+      </view>
+
+      <!-- 最高/最低温度 -->
+      <view class="forecast-cell">
+        <text class="temp-text">↑ {{item.tempMax}}</text>
+        <text class="temp-text">↓ {{item.tempMin}}</text>
+      </view>
+
+      <!-- 风向 & 风力 -->
+      <view class="forecast-cell">
+        <text class="wind-text">{{item.windDirDay}}</text>
+        <text class="wind-text">{{item.windScaleDay}}级</text>
+      </view>
     </view>
+  </block>
+</view>
+
+
+  <!-- 7天天气预报 -->
+  <view class="daily-forecast">
+    <block wx:for="{{dailyForecast}}" wx:key="date">
+      <view class="forecast-item">
+        <text class="date">{{item.date}}</text>
+        <image class="forecast-icon" src="{{item.icon}}"></image>
+        <text class="temp-range">{{item.tempMin}} ~ {{item.tempMax}}</text>
+      </view>
+
+      <!-- 额外天气详情 -->
+      <view class="forecast-details">
+        <text>🌅 日出: {{item.sunrise}}</text>
+        <text>🌇 日落: {{item.sunset}}</text>
+        <text>🌙 月相: {{item.moonPhase}}</text>
+        <text>🌕 月出: {{item.moonrise}}</text>
+        <text>🌑 月落: {{item.moonset}}</text>
+        <text>🌀 白天风力: {{item.windDirDay}} {{item.windScaleDay}}级</text>
+        <text>🌬 夜间风力: {{item.windDirNight}} {{item.windScaleNight}}级</text>
+        <text>🌡 气压: {{item.pressure}} hPa</text>
+        <text>🌓 紫外线指数: {{item.uvIndex}}</text>
+      </view>
+    </block>
   </view>
 
-  <!-- 生活指数 -->
-  <view class="life-index">
-    <view wx:for="{{lifeIndexes}}" class="index-item">
-      <text class="index-name">{{item.name}}</text>
-      <text class="index-value">{{item.value}}</text>
-    </view>
-  </view>
-
-  <!-- 空气质量 -->
-  <view class="air-quality">
-    <text>空气质量：{{airQuality.level}}（{{airQuality.value}}）</text>
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <image src="/images/loading.gif" class="loading-icon"/>
+    <text>加载中...</text>
   </view>
 </view>

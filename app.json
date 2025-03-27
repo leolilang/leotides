@@ -4,7 +4,8 @@
         "pages/logs/logs",
         "pages/home/home",
         "pages/profile/profile/profile",
-        "pages/weather/weather"
+        "pages/weather/weather",
+        "pages/citySelector/citySelector"
     ],
     "window": {
         "navigationBarTextStyle": "white",
@@ -48,5 +49,10 @@
                 "selectedIconPath": "images/profile-selected.png"
             }
         ]
+    },
+    "permission": {
+      "scope.userLocation": {
+        "desc": "用于获取当前位置天气信息"
+      }
     }
 }    

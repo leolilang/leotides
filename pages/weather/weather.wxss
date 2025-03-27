@@ -1,79 +1,215 @@
 /* pages/weather/weather.wxss */
+/* 城市选择 */
+.city-bar {
+    display: flex;
+    align-items: center;
+    padding: 30rpx;
+    font-size: 36rpx;
+  }
+
+  .arrow-icon {
+    width: 32rpx;
+    height: 32rpx;
+    margin-left: 15rpx;
+  }
+
+/* 页面布局 */
 .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 20rpx;
     background: #f5f5f5;
   }
   
-  .current-box {
-    display: flex;
-    align-items: center;
+  /* 当前天气 */
+  .current-weather {
+    width: 90%;
+    background: #ffffff;
     padding: 30rpx;
-    background: white;
-    border-radius: 16rpx;
+    border-radius: 20rpx;
+    box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+    text-align: center;
   }
   
-  .current-temp {
-    font-size: 72rpx;
-    margin-right: 40rpx;
+  .city {
+    font-size: 36rpx;
+    font-weight: bold;
+    margin-bottom: 10rpx;
   }
-  
-  .hourly-scroll {
-    white-space: nowrap;
-    margin: 20rpx 0;
-    background: white;
-    padding: 20rpx 0;
-  }
-  
-  .hour-item {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    width: 120rpx;
-    margin: 0 20rpx;
-  }
-  
+  .space {
+    width: 25px; /* 可按需调整间距大小 */
+    display: inline-block;
+}
   .weather-icon {
     width: 60rpx;
     height: 60rpx;
+  }
+  
+  .temp {
+    font-size: 36rpx;
+    font-weight: bold;
     margin: 10rpx 0;
   }
   
-  .daily-box {
-    background: white;
-    border-radius: 16rpx;
-    padding: 20rpx;
+  .weather,
+  .humidity,
+  .wind {
+    font-size: 28rpx;
+    margin-top: 5rpx;
+  }
+   /* 7日折线图
+  .chart-container {
+    width: 100%;
+    height: 700rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    margin-top: 20rpx;
+    border-radius: 20rpx;
+    box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
   }
   
-  .day-item {
+  .weather-chart {
+    width: 100%;
+    height: 600rpx;
+  } */
+
+   /* 7日天气预报表格 */
+  .forecast-container {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 10rpx;
+    overflow: hidden;
+    margin-top: 20rpx;
+    box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.1);
+  }
+  
+  .forecast-header {
+    display: flex;
+    justify-content: space-between;
+    background: #007aff;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 15rpx 0;
+    text-align: center;
+  }
+  
+  .header-cell {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .forecast-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 15rpx 0;
+    border-bottom: 1rpx solid #e0e0e0;
+    text-align: center;
+  }
+  
+  .forecast-cell {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .date-text {
+    font-size: 28rpx;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .weekday-text {
+    font-size: 24rpx;
+    color: #666;
+  }
+  
+  .weather-cell {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .weather-icon {
+    width: 40rpx;
+    height: 40rpx;
+    margin-right: 10rpx;
+  }
+  
+  .weather-text {
+    font-size: 26rpx;
+    color: #333;
+  }
+  
+  .temp-text {
+    font-size: 26rpx;
+    color: #ff5722;
+  }
+  
+  .wind-text {
+    font-size: 24rpx;
+    color: #666;
+  }
+  
+
+  /* 7日天气预报 */
+  .daily-forecast {
+    width: 90%;
+    margin-top: 20rpx;
+    background: #ffffff;
+    padding: 20rpx;
+    border-radius: 20rpx;
+    box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  }
+  
+  .forecast-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20rpx 0;
-    border-bottom: 1rpx solid #eee;
+    padding: 15rpx 0;
+    border-bottom: 1rpx solid #e0e0e0;
   }
   
-  .icon-small {
-    width: 40rpx;
-    height: 40rpx;
-    margin: 0 10rpx;
+  .date {
+    font-size: 28rpx;
   }
   
-  .life-index {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20rpx;
-    margin-top: 20rpx;
+  .forecast-icon {
+    width: 60rpx;
+    height: 60rpx;
   }
   
-  .index-item {
-    background: white;
-    padding: 20rpx;
-    border-radius: 8rpx;
+  .temp-range {
+    font-size: 28rpx;
   }
   
-  .air-quality {
-    margin-top: 20rpx;
-    padding: 20rpx;
-    background: white;
-    border-radius: 8rpx;
+  /* 额外天气详情 */
+  .forecast-details {
+    padding: 10rpx;
+    font-size: 24rpx;
+    color: #666;
+    background: #f9f9f9;
+    border-radius: 10rpx;
+    margin: 10rpx 0;
+  }
+  
+  .forecast-item:last-child {
+    border-bottom: none;
+  }
+  
+ /* 加载效果 */
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100rpx;
+  }
+  
+  .loading-icon {
+    width: 60rpx;
+    height: 60rpx;
+    margin-bottom: 20rpx;
   }

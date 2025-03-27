@@ -29,7 +29,8 @@ App({
             intro: '' // 新增个人简介字段
         },
         isLoggedIn: false,  // 默认未登录
-        contentHtml: ''
+        contentHtml: '',
+        apiKey: '3dc2b4606d7c431081593b6b46e55978' // 替换为你的实际API Key
     },
 
     // 保存用户信息到本地存储

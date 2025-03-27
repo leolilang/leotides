@@ -49,6 +49,15 @@ Page({
         // 加载默认位置
         this.loadLocationData(this.data.locationList[this.data.currentLocationIndex].url);
     },
+    onShow() {
+        // 从本地存储中读取最新的用户信息
+        const userInfo = wx.getStorageSync('userInfo');
+        if (userInfo) {
+            this.setData({
+                userInfo: userInfo
+            });
+        }
+    },
     loadLocationData(url) {
         // 发起请求获取对应位置的内容
         wx.request({

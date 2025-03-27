@@ -1,187 +1,207 @@
-// weather.js
-
-const { parse } = require('node-html-parser');
+// pages/weather/weather.js
+import wxCharts from '../../utils/wxcharts';
 
 Page({
     data: {
-        current: {},       // 当前天气
-        hourly: [],        // 24小时预报
-        daily15: [],       // 15天预报
-        lifeIndexes: [],   // 生活指数
-        airQuality: {}     // 空气质量
-      },
+      currentCityCode: "101020100",      // 当前选中城市id
+      currentCity: "上海",      // 当前选中城市name
+      currentWeather: null,    // 当前天气
+      dailyForecast: [],       // 七日预报
+      loading: false,          // 加载状态
+      apiKey: "3dc2b4606d7c431081593b6b46e55978",   // 替换为实际天气API
+      chart: null // 存储折线图实例
+    },
+  
     onLoad() {
+      this.loadWeatherData();
+    },
+  
+    // 加载天气
+    async loadWeatherData() {
+      this.setData({ loading: true });
+      
+      try {
+        // 获取实时天气
+        const current = await this.getWeather('now', this.data.currentCityCode);
+        // 获取七日预报
+        const daily = await this.getWeather('7d', this.data.currentCityCode);
+        
+        this.setData({
+          currentWeather: this.formatCurrent(current),
+          dailyForecast: this.formatDaily(daily),
+          loading: false
+        });
+        this.drawWeatherChart(this.formatDailyChart(daily));
+        console.log("格式化之后的实时天气:",this.data.currentWeather);
+        console.log("格式化之后的七日预报:",this.data.dailyForecast);
+      } catch (error) {
+        this.setData({ loading: false });
+        wx.showToast({ title: '加载失败', icon: 'none' });
+      }
+    },
+  
+    // 调用天气API
+    getWeather(type, location) {
+      return new Promise((resolve, reject) => {
         wx.request({
-            url: 'https://weathernew.pae.baidu.com/weathernew/pc?query=上海天气&srcid=4982&forecast=long_day_forecast',
-            success: (res) => {
-                if (res.statusCode === 200) {
-                    // console.log('API 响应数据:', res.data); // 打印整个响应数据
-                    // 这里需要根据实际返回的结构进行解析
-                    const resWeatherData = res.data;
-                    // 解析 HTML
-                    const root = parse(resWeatherData);
-                    // 获取所有 <script> 标签
-                    const scriptTags = root.querySelectorAll('script');
-                    let tplData = null;
-                    // 遍历 script 标签，查找包含 window.tplData 的内容
-                    scriptTags.forEach(script => {
-                        const scriptText = script.text;
-                        const match = scriptText.match(/window\.tplData\s*=\s*(\{.*?\});/s);
-                        if (match) {
-                            try {
-                                tplData = JSON.parse(match[1]);
-                            } catch (error) {
-                                console.error('JSON 解析失败:', error);
-                            }
-                        }
-                    });
-                    console.log('提取的 JSON:',tplData); // 输出提取的 JSON 数据
-                    this.processData(tplData);
-                } else {
-                    console.error('请求失败，状态码:', res.statusCode);
-                }
-            },
-            fail: (err) => {
-                console.error('请求失败:', err);
+          url: 'https://devapi.qweather.com/v7/weather/' + type,
+          header: {
+            'X-QW-Api-Key': '3dc2b4606d7c431081593b6b46e55978'
+          },
+          data: {
+            location: location
+          },
+          success: res => {
+            if (res.data.code === '200') {
+              resolve(res.data);
+            } else {
+              reject(res.data);
             }
+          },
+          fail: reject
         });
+      });
     },
-    processData(data) {
-        // 当前天气
-        const current = {
-          temp: data.weather.temperature,
-          weather: data.weather.weather,
-          wind: `${data.weather.wind_direction}${data.weather.wind_power}`,
-          humidity: data.weather.humidity + '%',
-          sunrise: data.feature.sunriseTime,
-          sunset: data.feature.sunsetTime
+  
+    // 格式化当前天气
+    formatCurrent(data) {
+        return {
+        temp: data.now.temp + "°C",
+        feelsLike: data.now.feelsLike + "°C",
+        weather: data.now.text,
+        icon: this.getWeatherIcon(data.now.icon),
+        humidity: data.now.humidity + "%",
+        windSpeed: data.now.windSpeed + " km/h",
+        windDir: data.now.windDir,
+        windScale: data.now.windScale + " 级",
+        pressure: data.now.pressure + " hPa",
+        visibility: data.now.vis + " km"
         };
-    
-        // 24小时预报
-        const hourly = data['24_hour_forecast'].info
-          .slice(0, 24)
-          .map(item => ({
-            time: item.hour.slice(8, 10) + '时',
-            temp: item.temperature,
-            icon: this.getWeatherIcon(item.weather)
-          }));
-    
-        // 15天预报
-        const daily15 = data['15_day_forecast'].info
-          .slice(0, 15)
-          .map(item => ({
-            date: this.formatDate(item.date),
-            dayIcon: this.getWeatherIcon(item.weather_day),
-            nightIcon: this.getWeatherIcon(item.weather_night),
-            temp: `${item.temperature_day}°/${item.temperature_night}°`
-          }));
-    
-        // 生活指数
-        const lifeIndexes = data.recommend_zhishu.item.map(item => ({
-          name: item.item_name,
-          value: item.item_desc
-        }));
-    
-        // 空气质量
-        const airQuality = {
-          level: data.ps_pm25.level,
-          value: data.ps_pm25.ps_pm25
-        };
-    
-        this.setData({ current, hourly, daily15, lifeIndexes, airQuality });
-      },
-    
-      getWeatherIcon(weather) {
-        const icons = {
-          '晴': 'sunny',
-          '多云': 'cloudy',
-          '阴': 'overcast',
-          '小雨': 'rain'
-        };
-        return icons[weather] || 'unknown';
-      },
-    
-      formatDate(dateStr) {
-        const [year, month, day] = dateStr.split('-');
-        return `${month.padStart(2, '0')}/${day.padStart(2, '0')}`;
-      },
-      goToHomePage() {
-        wx.switchTab({
-            url: '../home/home',
-            success: () => {
-                console.log('成功跳转到主页');
-            },
-            fail: err => {
-                console.error('跳转失败:', err);
-            }
-        });
     },
-    goToProfile() {
-        const app = getApp();
-        if (!app.globalData.isLoggedIn) {
-            // 弹出登录提示窗口
-            wx.showModal({
-                title: '登录提示',
-                content: '请先登录以查看个人中心',
-                confirmText: '登录',
-                success: res => {
-                    if (res.confirm) {
-                        // 弹出带输入框的登录弹窗
-                        wx.showModal({
-                            title: '登录',
-                            content: '游客',
-                            editable: true,
-                            placeholderText: '请输入昵称',
-                            confirmText: '确定',
-                            cancelText: '取消',
-                            success: loginRes => {
-                                if (loginRes.confirm) {
-                                    const nickname = loginRes.content && loginRes.content.trim();
-                                    // 验证昵称长度
-                                    if (!nickname || nickname.length < 2 || nickname.length > 10) {
-                                        wx.showToast({
-                                            title: '请输入有效的昵称（2-10个字符）',
-                                            icon: 'none'
-                                        });
-                                        return;
-                                    }
-                                    // 保存昵称信息到本地存储，并更新全局状态
-                                    wx.setStorageSync('nickName', nickname);
-                                    app.globalData.isLoggedIn = true;
-                                    app.globalData.userInfo.nickName = nickname;
-                                    app.saveUserInfoToStorage(); // 保存用户信息和登录状态
 
-                                    wx.showToast({
-                                        title: '登录成功',
-                                        icon: 'success'
-                                    });
-                                    // 登录成功后跳转到个人中心页面
-                                    wx.switchTab ({
-                                        url: '../profile/profile/profile',
-                                        success: () => {
-                                            console.log('成功跳转到个人中心页面');
-                                        },
-                                        fail: err => {
-                                            console.error('跳转失败:', err);
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    }
-                }
-            });
+    // 格式化 7 日折线
+  formatDailyChart(data) {
+    return data.daily.map(item => ({
+      date: item.fxDate.substr(5).replace('-', '/'),
+      tempMin: Number(item.tempMin),
+      tempMax: Number(item.tempMax),
+      icon: this.getWeatherIcon(item.iconDay)
+    }));
+  },
+
+    // 格式化 7 天预报
+    formatDaily(data) {
+        return data.daily.map(item => ({
+        date: item.fxDate.substr(5).replace('-', '/'),
+        weekday: this.getWeekday(item.fxDate),  
+        textDay: item.textDay,
+        tempMin: item.tempMin + "°C",
+        tempMax: item.tempMax + "°C",
+        icon: this.getWeatherIcon(item.iconDay),
+        sunrise: item.sunrise,
+        sunset: item.sunset,
+        moonrise: item.moonrise,
+        moonset: item.moonset,
+        moonPhase: item.moonPhase,
+        windDirDay: item.windDirDay,
+        windScaleDay: item.windScaleDay,
+        windDirNight: item.windDirNight,
+        windScaleNight: item.windScaleNight,
+        humidity: item.humidity + "%",
+        pressure: item.pressure + " hPa",
+        uvIndex: item.uvIndex
+        }));
+    },
+    // 绘制 7 日温度折线图
+    drawWeatherChart(dailyData) {
+        const categories = dailyData.map(item => item.date); // X轴日期
+        const tempMax = dailyData.map(item => item.tempMax); // 最高温度
+        const tempMin = dailyData.map(item => item.tempMin); // 最低温度
+
+        // 获取屏幕宽度，确保适配
+        const systemInfo = wx.getSystemInfoSync();
+        const windowWidth = systemInfo.windowWidth || 320;
+
+        if (this.data.chart) {
+        this.data.chart.updateData({ categories, series: [{ data: tempMax }, { data: tempMin }] });
         } else {
-            // 已登录，直接跳转到个人中心页面
-            wx.switchTab ({
-                url: '../profile/profile/profile',
-                success: () => {
-                    console.log('成功跳转到个人中心页面');
+        this.setData({
+            chart: new wxCharts({
+            canvasId: 'weatherChart',
+            type: 'line',
+            categories: categories,
+            series: [
+                {
+                name: '最高温度',
+                data: tempMax,
+                format: val => `${val}°C`,
+                color: '#ff5722'
                 },
-                fail: err => {
-                    console.error('跳转失败:', err);
+                {
+                name: '最低温度',
+                data: tempMin,
+                format: val => `${val}°C`,
+                color: '#03a9f4'
                 }
-            });
+            ],
+            xAxis: {
+                disableGrid: true
+            },
+            yAxis: {
+                title: '温度 (°C)',
+                min: Math.min(...tempMin) - 2,
+                max: Math.max(...tempMax) + 2
+            },
+            width: windowWidth - 40,
+            height: 300,
+            dataLabel: true
+            })
+        });
         }
+    },
+    // 获取当天星期
+    getWeekday(dateStr) {
+        const date = new Date(dateStr);
+        const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        return weekdays[date.getDay()];
+      },
+    // 获取天气图标
+    getWeatherIcon(iconCode) {
+      return `/images/weather-icons/${iconCode}.png`;
+    },
+  
+    // 选择城市
+    chooseCity() {
+      wx.navigateTo({
+        url: '/pages/citySelector/citySelector'
+      });
+    },
+  
+    // 接收城市选择结果
+    onCitySelected(e) {
+      const city = e.detail;
+      let cityCode;
+      if (city) {
+        wx.request({
+            url: 'https://geoapi.qweather.com/v2/city/lookup',
+            header: {
+                'X-QW-Api-Key':'3dc2b4606d7c431081593b6b46e55978'
+              },
+            data: {
+              location: city,
+              range: 'cn',
+              number: 20
+            },
+            success: res => {
+              if (res.data.code === '200') {
+                console.log("获取到的位置信息："+res.data.location[0].id);
+                cityCode = res.data.location[0].id;
+                this.setData({ currentCity: city });
+                this.setData({ currentCityCode: cityCode });
+                this.loadWeatherData();
+              }
+            }
+          });
+      }
     }
-})
+  });

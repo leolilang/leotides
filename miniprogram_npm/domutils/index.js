@@ -4,7 +4,7 @@ var __DEFINE__ = function(modId, func, req) { var m = { exports: {}, _tempexport
 var __REQUIRE__ = function(modId, source) { if(!__MODS__[modId]) return require(source); if(!__MODS__[modId].status) { var m = __MODS__[modId].m; m._exports = m._tempexports; var desp = Object.getOwnPropertyDescriptor(m, "exports"); if (desp && desp.configurable) Object.defineProperty(m, "exports", { set: function (val) { if(typeof val === "object" && val !== m._exports) { m._exports.__proto__ = val.__proto__; Object.keys(val).forEach(function (k) { m._exports[k] = val[k]; }); } m._tempexports = val }, get: function () { return m._tempexports; } }); __MODS__[modId].status = 1; __MODS__[modId].func(__MODS__[modId].req, m, m.exports); } return __MODS__[modId].m.exports; };
 var __REQUIRE_WILDCARD__ = function(obj) { if(obj && obj.__esModule) { return obj; } else { var newObj = {}; if(obj != null) { for(var k in obj) { if (Object.prototype.hasOwnProperty.call(obj, k)) newObj[k] = obj[k]; } } newObj.default = obj; return newObj; } };
 var __REQUIRE_DEFAULT__ = function(obj) { return obj && obj.__esModule ? obj.default : obj; };
-__DEFINE__(1742285584159, function(require, module, exports) {
+__DEFINE__(1742958484354, function(require, module, exports) {
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -38,8 +38,8 @@ Object.defineProperty(exports, "isComment", { enumerable: true, get: function ()
 Object.defineProperty(exports, "isDocument", { enumerable: true, get: function () { return domhandler_1.isDocument; } });
 Object.defineProperty(exports, "hasChildren", { enumerable: true, get: function () { return domhandler_1.hasChildren; } });
 //# sourceMappingURL=index.js.map
-}, function(modId) {var map = {"./stringify.js":1742285584160,"./traversal.js":1742285584161,"./manipulation.js":1742285584162,"./querying.js":1742285584163,"./legacy.js":1742285584164,"./helpers.js":1742285584165,"./feeds.js":1742285584166}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742285584160, function(require, module, exports) {
+}, function(modId) {var map = {"./stringify.js":1742958484355,"./traversal.js":1742958484356,"./manipulation.js":1742958484357,"./querying.js":1742958484358,"./legacy.js":1742958484359,"./helpers.js":1742958484360,"./feeds.js":1742958484361}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1742958484355, function(require, module, exports) {
 
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -132,7 +132,7 @@ function innerText(node) {
 }
 //# sourceMappingURL=stringify.js.map
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742285584161, function(require, module, exports) {
+__DEFINE__(1742958484356, function(require, module, exports) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getChildren = getChildren;
@@ -259,7 +259,7 @@ function prevElementSibling(elem) {
 }
 //# sourceMappingURL=traversal.js.map
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742285584162, function(require, module, exports) {
+__DEFINE__(1742958484357, function(require, module, exports) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.removeElement = removeElement;
@@ -403,7 +403,7 @@ function prepend(elem, prev) {
 }
 //# sourceMappingURL=manipulation.js.map
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742285584163, function(require, module, exports) {
+__DEFINE__(1742958484358, function(require, module, exports) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.filter = filter;
@@ -560,7 +560,7 @@ function findAll(test, nodes) {
 }
 //# sourceMappingURL=querying.js.map
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742285584164, function(require, module, exports) {
+__DEFINE__(1742958484359, function(require, module, exports) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.testElement = testElement;
@@ -729,8 +729,8 @@ function getElementsByTagType(type, nodes, recurse, limit) {
     return (0, querying_js_1.filter)(Checks["tag_type"](type), nodes, recurse, limit);
 }
 //# sourceMappingURL=legacy.js.map
-}, function(modId) { var map = {"./querying.js":1742285584163}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742285584165, function(require, module, exports) {
+}, function(modId) { var map = {"./querying.js":1742958484358}; return __REQUIRE__(map[modId], modId); })
+__DEFINE__(1742958484360, function(require, module, exports) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentPosition = void 0;
@@ -874,7 +874,7 @@ function uniqueSort(nodes) {
 }
 //# sourceMappingURL=helpers.js.map
 }, function(modId) { var map = {}; return __REQUIRE__(map[modId], modId); })
-__DEFINE__(1742285584166, function(require, module, exports) {
+__DEFINE__(1742958484361, function(require, module, exports) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFeed = getFeed;
@@ -1065,8 +1065,8 @@ function isValidFeed(value) {
     return value === "rss" || value === "feed" || value === "rdf:RDF";
 }
 //# sourceMappingURL=feeds.js.map
-}, function(modId) { var map = {"./stringify.js":1742285584160,"./legacy.js":1742285584164}; return __REQUIRE__(map[modId], modId); })
-return __REQUIRE__(1742285584159);
+}, function(modId) { var map = {"./stringify.js":1742958484355,"./legacy.js":1742958484359}; return __REQUIRE__(map[modId], modId); })
+return __REQUIRE__(1742958484354);
 })()
 //miniprogram-npm-outsideDeps=["domhandler","dom-serializer","domelementtype"]
 //# sourceMappingURL=index.js.map

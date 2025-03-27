@@ -1,0 +1,29 @@
+<view class="city-selector">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <input 
+      placeholder="输入城市名称" 
+      focus 
+      bindinput="searchCity" 
+      class="search-input"
+    />
+  </view>
+
+  <!-- 搜索结果列表 -->
+  <scroll-view class="city-list" scroll-y>
+    <block wx:for="{{searchResults}}" wx:key="id">
+      <view 
+        class="city-item" 
+        bindtap="selectCity" 
+        data-city="{{item.name}}"
+      >
+        <text>{{item.name}}</text>
+        <text class="adm">{{item.adm2}}</text>
+      </view>
+    </block>
+
+    <view wx:if="{{!searchResults.length}}" class="empty-tip">
+      <text>输入城市名称进行搜索</text>
+    </view>
+  </scroll-view>
+</view>
