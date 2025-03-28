@@ -11,8 +11,6 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 15px;
-    background-color: #f8f8f8;
-    border-bottom: 1px solid #ddd;
 }
 .station-info {
     color: #ffffff;
@@ -32,9 +30,7 @@
     display: flex;
     align-items: center;
     padding: 6px 10px;
-    background-color: #fff;
     border-radius: 6px;
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
 }
   .picker-view {
     display: flex;
@@ -57,10 +53,7 @@
   
   /* 第二行：图表 */
   .chart-container {
-    background-color: #ffffff;
     padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
     margin: 10px auto;
     width: 90%;
     height: 280px; /* 确保图表高度足够 */
@@ -93,7 +86,6 @@
     border: 2px solid #fff;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
     position: absolute;
-    top: 8px;
     right: 16px;
     width: 28px;
     height: 28px;

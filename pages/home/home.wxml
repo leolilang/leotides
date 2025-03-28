@@ -24,7 +24,7 @@
     </view>
     <!-- 第二行：潮汐波浪图 -->
     <view class="chart-container">
-        <ec-canvas id="tideWaveChart" canvas-id="tideWaveCanvas" ec="{{ ec }}" style="width: 100%; height: 300px;"></ec-canvas>
+        <ec-canvas id="tideWaveChart" canvas-id="tideWaveCanvas" ec="{{ ec }}" style="width: 100%; height: 400px;"></ec-canvas>
     </view>
      <!-- 第三行：涨潮退潮信息展示 -->
      <view class="tide-table">
