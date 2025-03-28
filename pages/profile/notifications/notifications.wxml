@@ -1,0 +1,32 @@
+<!-- notifications.wxml -->
+<view class="notifications-container">
+    <view class="header">
+        <text class="title">消息通知</text>
+        <text class="clear-btn" bindtap="clearNotifications">清空</text>
+    </view>
+
+    <view class="notifications-list" wx:if="{{!loading && notifications.length > 0}}">
+        <view class="notification-item {{item.isRead ? 'read' : 'unread'}}" 
+              wx:for="{{notifications}}" 
+              wx:key="index">
+            <view class="notification-content">
+                <text class="notification-title">{{item.title}}</text>
+                <text class="notification-message">{{item.message}}</text>
+                <text class="notification-time">{{item.time}}</text>
+            </view>
+            <view class="notification-actions" wx:if="{{!item.isRead}}">
+                <text class="read-btn" data-index="{{index}}" bindtap="markAsRead">标记已读</text>
+            </view>
+        </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{!loading && notifications.length === 0}}">
+        <image class="empty-icon" src="/images/empty.png" mode="aspectFit"></image>
+        <text class="empty-text">暂无消息通知</text>
+    </view>
+
+    <view class="loading" wx:if="{{loading}}">
+        <image class="loading-icon" src="/images/loading.gif" mode="aspectFit"></image>
+        <text>加载中...</text>
+    </view>
+</view> 

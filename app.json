@@ -3,10 +3,14 @@
         "pages/index/index",
         "pages/logs/logs",
         "pages/home/home",
-        "pages/profile/profile/profile",
+        "pages/profile/profile",
         "pages/weather/weather",
         "pages/citySelector/citySelector",
-        "pages/searchStation/searchStation"
+        "pages/searchStation/searchStation",
+		"pages/profile/favorites/favorites",
+        "pages/profile/history/history",
+        "pages/profile/notifications/notifications",
+        "pages/profile/about/about"
     ],
     "window": {
         "navigationBarTextStyle": "white",
@@ -44,7 +48,7 @@
                 "selectedIconPath": "images/weather-selected.png"
             },
             {
-                "pagePath": "pages/profile/profile/profile",
+                "pagePath": "pages/profile/profile",
                 "text": "个人",
                 "iconPath": "images/profile.png",
                 "selectedIconPath": "images/profile-selected.png"

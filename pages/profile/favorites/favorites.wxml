@@ -1,0 +1,29 @@
+<!-- favorites.wxml -->
+<view class="favorites-container">
+    <view class="header">
+        <text class="title">我的收藏</text>
+        <text class="clear-btn" bindtap="clearFavorites">清空</text>
+    </view>
+
+    <view class="favorites-list" wx:if="{{!loading && favorites.length > 0}}">
+        <view class="favorite-item" wx:for="{{favorites}}" wx:key="index">
+            <view class="favorite-content">
+                <text class="favorite-title">{{item.title}}</text>
+                <text class="favorite-time">{{item.time}}</text>
+            </view>
+            <view class="favorite-actions">
+                <text class="remove-btn" data-index="{{index}}" bindtap="removeFavorite">取消收藏</text>
+            </view>
+        </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{!loading && favorites.length === 0}}">
+        <image class="empty-icon" src="/images/empty.png" mode="aspectFit"></image>
+        <text class="empty-text">暂无收藏内容</text>
+    </view>
+
+    <view class="loading" wx:if="{{loading}}">
+        <image class="loading-icon" src="/images/loading.gif" mode="aspectFit"></image>
+        <text>加载中...</text>
+    </view>
+</view> 

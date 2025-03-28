@@ -1,0 +1,61 @@
+<!-- profile.wxml -->
+<view class="profile-container">
+    <!-- 用户头像和基本信息 -->
+    <view class="user-header">
+        <view class="avatar-container" bindtap="chooseAvatar">
+            <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+            <view class="avatar-edit">点击更换头像</view>
+        </view>
+        <view class="user-info">
+            <block wx:if="{{!isEditing}}">
+                <text class="nickname">{{userInfo.nickName}}</text>
+                <text class="intro">{{userInfo.intro || '这个人很懒，什么都没写~'}}</text>
+                <button class="edit-btn" bindtap="startEdit">编辑资料</button>
+            </block>
+            <block wx:else>
+                <view class="edit-form">
+                    <view class="input-group">
+                        <text class="input-label">昵称</text>
+                        <input class="nickname-input" 
+                               value="{{tempUserInfo.nickName}}"
+                               data-field="nickName"
+                               bindinput="onInput"
+                               placeholder="请输入昵称"/>
+                    </view>
+                    <view class="input-group">
+                        <text class="input-label">简介</text>
+                        <textarea class="intro-input"
+                                  value="{{tempUserInfo.intro}}"
+                                  data-field="intro"
+                                  bindinput="onInput"
+                                  placeholder="请输入个人简介"/>
+                    </view>
+                    <view class="edit-buttons">
+                        <button class="save-btn" bindtap="saveUserInfo">保存</button>
+                        <button class="cancel-btn" bindtap="cancelEdit">取消</button>
+                    </view>
+                </view>
+            </block>
+        </view>
+    </view>
+
+    <!-- 功能列表 -->
+    <view class="function-list">
+        <view class="function-item" bindtap="navigateToFavorites">
+            <text class="function-title">我的收藏</text>
+            <text class="arrow">></text>
+        </view>
+        <view class="function-item" bindtap="navigateToHistory">
+            <text class="function-title">浏览历史</text>
+            <text class="arrow">></text>
+        </view>
+        <view class="function-item" bindtap="navigateToNotifications">
+            <text class="function-title">消息通知</text>
+            <text class="arrow">></text>
+        </view>
+        <view class="function-item" bindtap="navigateToAbout">
+            <text class="function-title">关于我们</text>
+            <text class="arrow">></text>
+        </view>
+    </view>
+</view> 
