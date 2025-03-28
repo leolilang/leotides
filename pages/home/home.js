@@ -20,8 +20,9 @@ Page({
         selectedDate: '', // 格式：YYYYMMDD
         dateOptions: [], // 可选日期列表（10天）
         // 潮汐
-        tideHourly: [], // 24小时潮汐数据，用于波浪图
+        tideHourly: [], // 24小时潮汐 ，用于波浪图
         tideTable: [],
+        fxLink: '',
         // ECharts 配置
         ec: {
             onInit: initChart
@@ -71,7 +72,7 @@ Page({
         } else {
             console.warn('Chart 实例尚未保存，请检查 ec-canvas 组件');
         }
-        // 加载潮汐数据（此时组件已准备好）
+        // 加载潮汐 （此时组件已准备好）
         this.fetchTideData();
     },
 
@@ -90,13 +91,13 @@ Page({
         wx.navigateTo({
             url: '/pages/searchStation/searchStation',
             events: {
-                // 接收站点搜索页面传回的数据
+                // 接收站点搜索页面传回的 
                 acceptStationData: (data) => {
                     if (data && data.station) {
                         this.setData({
                             station: data.station
                         });
-                        // 更新潮汐数据
+                        // 更新潮汐 
                         this.fetchTideData();
                     }
                 }
@@ -126,10 +127,11 @@ Page({
                 if (res.statusCode === 200 && res.data.code === "200") {
                     const tideData = res.data;
                     const tideHourly = tideData.tideHourly;
-                    console.log('获取到的 tideTable 数据:', tideData.tideTable); // 打印获取到的 tideTable 数据
+                    console.log('获取到的 tideTable  :', tideData.tideTable); // 打印获取到的 tideTable  
                     this.setData({
                         tideTable: this.processTidePeriods(tideData.tideTable, tideHourly[tideHourly.length - 1].height),
-                        tideHourly: tideHourly
+                        tideHourly: tideHourly,
+                        fxLink: tideData.fxLink // 存储 fxLink
                     });
                     // 更新潮汐波浪图
                     this.drawTideWave(tideData.tideHourly);
@@ -196,7 +198,7 @@ Page({
             return;
         }
         
-        // 处理时间和潮高数据
+        // 处理时间和潮高 
         const times = tideHourly.map(item => item.fxTime.substring(11, 16));
         const heights = tideHourly.map(item => parseFloat(item.height));
         
@@ -241,4 +243,5 @@ Page({
         chart.setOption(option);
         console.log('图表配置已设置', option);
     }
+    
 });

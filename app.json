@@ -11,6 +11,7 @@
         "pages/profile/history/history",
         "pages/profile/notifications/notifications",
         "pages/profile/about/about"
+        
     ],
     "window": {
         "navigationBarTextStyle": "white",
