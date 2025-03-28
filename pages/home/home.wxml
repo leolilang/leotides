@@ -4,7 +4,7 @@
     <!-- 第一行：站点信息、站点选择图标、日期选择 -->
     <view class="header">
         <!-- 站点信息及选择按钮 -->
-        <view class="station-info" bindtap="onStationSelect">
+        <view class="station-info animated-button" bindtap="onStationSelect">
         <text class="station-name">{{ station.name }}</text>
         <image src="/images/icon-select.png" class="icon"></image>
         </view>

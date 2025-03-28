@@ -1,9 +1,10 @@
 // home.js
 const echarts = require('../../ec-canvas/echarts'); // 引入 echarts
-
+const systemInfo = wx.getSystemInfoSync(); // 获取设备信息
+const dpr = systemInfo.pixelRatio; // 设备像素比
 // 初始化 ECharts 图表
 function initChart(canvas, width, height) {
-    const chart = echarts.init(canvas, null, { width, height });
+    const chart = echarts.init(canvas, "webgl", { width, height ,devicePixelRatio: dpr,});
     canvas.setChart(chart);
     console.log('ECharts 图表初始化成功:', chart);
     // 保存 chart 实例到当前页面对象上
@@ -203,6 +204,10 @@ Page({
         const heights = tideHourly.map(item => parseFloat(item.height));
         
         const option = {
+            backgroundColor: "#ffffff",
+            tooltip: {
+                trigger: 'axis'
+            },
             title: {
                 text: '潮汐波浪图',
                 left: 'center'
@@ -212,7 +217,7 @@ Page({
                 data: times,
                 boundaryGap: false,
                 axisLabel: {
-                    rotate: 45
+                    lineStyle: { color: "#666" }
                 },
                 splitLine: {
                     show: true
@@ -221,24 +226,32 @@ Page({
             yAxis: {
                 type: 'value',
                 name: '潮高(m)',
+                axisLine: { lineStyle: { color: "#666" } },
                 splitLine: {
-                    show: true
+                    lineStyle: { color: "#ddd" }
                 }
             },
             series: [{
                 data: heights,
                 type: 'line',
                 smooth: true,
+                areaStyle: {
+                    color: {
+                        type: "linear",
+                        x: 0, y: 0, x2: 0, y2: 1,
+                        colorStops: [
+                            { offset: 0, color: "#4fc3f7" },  // 渐变起点（浅蓝色）
+                            { offset: 1, color: "#4fc3f7" }  // 渐变终点（白色）
+                        ],
+                    },
+                },
                 lineStyle: {
-                    color: '#008000',
+                    color: "#0288d1",
                     width: 2
                 },
                 symbol: 'circle',
                 symbolSize: 6
-            }],
-            tooltip: {
-                trigger: 'axis'
-            }
+            }]
         };
         chart.setOption(option);
         console.log('图表配置已设置', option);

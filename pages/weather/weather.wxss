@@ -19,7 +19,7 @@
     flex-direction: column;
     align-items: center;
     padding: 20rpx;
-    background: #f5f5f5;
+    background: linear-gradient(to bottom, #e0f7fa, #ffffff); /* 由浅蓝到白色的渐变 */
   }
   
   /* 当前天气 */

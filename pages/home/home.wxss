@@ -1,7 +1,8 @@
 /* home.wxss */
 .container {
     padding: 10px;
-    background-color: #ffffff;
+    background: linear-gradient(to bottom, #e0f7fa, #ffffff); /* 由浅蓝到白色的渐变 */
+    min-height: 100vh; /* 保证页面填充满 */
   }
   
   /* 第一行：头部信息 */
@@ -14,10 +15,13 @@
     border-bottom: 1px solid #ddd;
 }
 .station-info {
-    display: flex;
-    align-items: center;
-    font-size: 16px;
-    color: #333;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+}
+.animated-button:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
 }
   .station-name {
     font-size: 16px;
@@ -84,11 +88,10 @@
     border-bottom: none;
 }
 
-  
-
-
 /* 用户头像样式 */
 .user-avatar {
+    border: 2px solid #fff;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
     position: absolute;
     top: 8px;
     right: 16px;
