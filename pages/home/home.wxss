@@ -1,80 +1,91 @@
 /* home.wxss */
-.navigation-bar {
-    height: 44px;
-    line-height: 44px;
-    text-align: center;
-    background-color: #008000;
-    color: #ffffff;
-    font-size: 18px;
+.container {
+    padding: 10px;
+    background-color: #ffffff;
+  }
+  
+  /* 第一行：头部信息 */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #ddd;
+}
+.station-info {
     display: flex;
     align-items: center;
-    justify-content: center;
-}
-
-
-.content-container {
-    padding: 16px;
-}
-
-.content-container h1 {
-    font-size: 24px;
-    color: #333;
-    text-align: center;
-    margin-bottom: 16px;
-}
-
-.content-container p {
     font-size: 16px;
-    color: #666;
-    text-align: center;
-    margin-bottom: 16px;
+    color: #333;
 }
-
-.content-container button {
-    background-color: #008000;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 16px;
-    font-size: 14px;
-    cursor: pointer;
+  .station-name {
+    font-size: 16px;
+    color: #333;
+    margin-right: 5px;
+  }
+  .date-picker {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
 }
-
-.content-container table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 16px;
-}
-
-.content-container table td {
+  .picker-view {
+    display: flex;
+    align-items: center;
     border: 1px solid #ccc;
-    padding: 8px;
-    text-align: center;
-}
-
-.content-container .tidesBenchmark {
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  .picker-text {
     font-size: 14px;
-    color: #999;
-    margin-bottom: 8px;
+    margin-right: 5px;
+    color: #333;
+}
+  
+  /* 通用图标样式 */
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* 第二行：图表 */
+  .chart-container {
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 10px auto;
+    width: 90%;
+    height: 280px; /* 确保图表高度足够 */
+}
+  
+  /* 第三行：潮汐信息 */
+  .tide-table {
+    background-color: #e3f2fd; /* 淡蓝色背景 */
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    margin: 10px auto; /* 居中显示 */
 }
 
-.profile-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 12px 24px;
-    background-color: #008000;
-    color: white;
-    border-radius: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+.tide-row {
+    padding: 8px 0;
+    border-bottom: 1px solid #bbdefb; /* 更淡的分割线 */
+    font-size: 16px;
+    color: #333;
+    text-align: center; /* 文字居中 */
 }
 
-/* 新增 echarts 组件样式 */
-.ec-canvas {
-  width: 100%;
-  height: 300px;
-  margin-top: 20px;
+.tide-row:last-child {
+    border-bottom: none;
 }
+
+  
+
 
 /* 用户头像样式 */
 .user-avatar {
@@ -91,51 +102,4 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-.tidesPoint {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    background-color: #ffffff; /* 表格背景颜色 */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
-}
-.tidesPoint th, .tidesPoint td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: center;
-}
-.tidesPoint th {
-    background-color: #e6f7ff; /* 表头背景颜色，浅蓝色 */
-    color: #333; /* 表头文字颜色 */
-    font-weight: bold;
-}
-.tidesPoint tr:nth-child(even) {
-    background-color: #f2f2f2; /* 偶数行背景颜色 */
-}
-.tidesPoint tr:hover {
-    background-color: #e9e9e9; /* 鼠标悬停行背景颜色 */
-}
-.tidesPoint caption {
-    caption-side: top;
-    font-size: 1.5em;
-    margin-bottom: 10px;
-    font-weight: bold;
-    color: #333;
-}
-
-.picker {
-    color: white;
-    margin-left: 10px;
-}
-/*天气按钮样式*/
-.weather-btn {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    padding: 12px 24px;
-    background-color: #008000;
-    color: white;
-    border-radius: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }

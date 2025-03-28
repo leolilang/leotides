@@ -1,17 +1,40 @@
 <!--home.wxml-->
-<view class="navigation-bar">
-    <view class="user-avatar">
-        <image src="{{userInfo.avatarUrl}}" mode="aspectFit"></image>
-    </view>
-    <picker bindchange="onLocationChange" value="{{currentLocationIndex}}" range="{{locationNames}}">
-        <view class="picker">
-            {{locationList[currentLocationIndex].name}}
+<wxs src='../../utils/utils.wxs' module='tools'/>
+<view class="container">
+    <!-- 第一行：站点信息、站点选择图标、日期选择 -->
+    <view class="header">
+        <!-- 站点信息及选择按钮 -->
+        <view class="station-info" bindtap="onStationSelect">
+        <text class="station-name">{{ station.name }}</text>
+        <image src="/images/icon-select.png" class="icon"></image>
         </view>
-    </picker>
-</view>
-<view class="content-container">
-  <rich-text nodes="{{htmlContent}}"></rich-text>
-  <canvas canvas-id="tideWaveCanvas" style="width: 100%; height: 300px;"></canvas>
-  <!-- <button class="profile-btn" bindtap="goToProfile">个人中心</button>
-  <button class="weather-btn" bindtap="goToWeatherPage">天气</button> -->
+        <!-- 日期选择 -->
+        <view class="date-picker">
+        <picker mode="selector" range="{{ dateOptions }}" bindchange="onDateChange">
+            <view class="picker-view">
+            <text class="picker-text">{{ selectedDate }}</text>
+            <image src="/images/icon-calendar.png" class="icon"></image>
+            </view>
+        </picker>
+        </view>
+        <!-- 用户头像展示 -->
+        <view class="user-avatar">
+        <image src="{{userInfo.avatarUrl}}" mode="aspectFit"></image>
+        </view>
+    </view>
+    <!-- 第二行：潮汐波浪图 -->
+    <view class="chart-container">
+        <ec-canvas id="tideWaveChart" canvas-id="tideWaveCanvas" ec="{{ ec }}" style="width: 100%; height: 300px;"></ec-canvas>
+    </view>
+     <!-- 第三行：涨潮退潮信息展示 -->
+     <view class="tide-table">
+        <block wx:for="{{ tideTable }}" wx:key="index">
+            <view class="tide-row">
+                <text style="color: {{item.type === '涨潮' ? 'red' : 'green'}}">{{ item.type }}: </text>
+                <text>{{ item.startTime }}-{{ item.endTime }}</text>   
+                <text>潮高：{{ item.height }}m</text>
+            </view>
+        </block>
+    </view>
+
 </view>
